@@ -1,9 +1,11 @@
 package com.joshuacrotts.sidescroller.main;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -15,9 +17,10 @@ import java.util.LinkedList;
 import javax.imageio.ImageIO;
 
 public class Player extends GameObject implements KeyListener {
-
+	
 	// {left, right, above, below} relative to player
 	int[] isCollision = { 0, 0, 0, 0 };
+	Rectangle collisionRect = new Rectangle(0, 0, 10, 10);
 
 	public static int x;
 	private static int y;
@@ -47,7 +50,7 @@ public class Player extends GameObject implements KeyListener {
 	// Physics
 	private int velyInit = 4;
 	private double accel = .1;
-	private double t = 0;
+	private double time = 0;
 
 	private int hVel = 5;
 
@@ -60,9 +63,10 @@ public class Player extends GameObject implements KeyListener {
 
 	public Player(int x, int y, ID id, Handler handler, Game game, Level[] levels) {
 		super();
+		super.setId(id);
+		
 		this.x = x;
 		this.y = y;
-		super.setId(id);
 
 		this.loadSprites();
 		this.rAnimator = new Animator(rSprites, 30, this);
@@ -104,23 +108,14 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		if (jumping) { // This probably needs to go in the counter.
-			t++;
-			velY = -(velyInit - (accel * t));
+			time++;
+			velY = -(velyInit - (accel * time));
 			velY *= -1;
 
 		}
 
 		if (falling) {
-			if (y < Game.HEIGHT - (currentSprite.getHeight() + (currentSprite.getHeight() / 2))) {
-				velY = Math.abs(timer);
-				timer -= .6;
-			} else {
-				velY = 0;
-				timer = -15.8;
-				jumping = false;
-				falling = false;
-				this.y = Game.HEIGHT - (currentSprite.getHeight() + (currentSprite.getHeight() / 2));
-			}
+			velY = accel * time;
 		}
 
 		int[] collisions = testForCollisions(handler.getEntities());
@@ -130,9 +125,19 @@ public class Player extends GameObject implements KeyListener {
 		}
 		if (collisions[2] == 1 || collisions[3] == 1){ //Top or bottom collisions
 			velY = 0;
+			time = 0;
+			if (collisions[2] == 1){
+				falling = true;
+			}
 		}
-
-		// System.out.println(x);
+		
+		System.out.println(this.getWidth());
+		
+/*
+		for (int i = 0; i < collisions.length; i++){
+			System.out.println("Index " + i + " is: " + collisions[i]);
+		}
+		*/
 		this.x += velX;
 		this.y += velY;
 
@@ -149,6 +154,11 @@ public class Player extends GameObject implements KeyListener {
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
 		g2.draw(getBoundsTop());
+		
+		g2.setColor(Color.GREEN);
+		g2.setStroke(new BasicStroke(10));
+		g2.draw(collisionRect);
+		g2.setStroke(new BasicStroke(2));
 	}
 
 	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
@@ -165,28 +175,48 @@ public class Player extends GameObject implements KeyListener {
 			// Tests x's will intersect and are in the same y range (Right)
 			if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth()) && handler.sameY_Range(this, tempObj)) {
 				isCollision[1] = 1;
+				
+				collisionRect = outlineObject(tempObj);
 			}
 
 			// Tests x's will intersect and are in the same y range (Right)
 			if ((this.x + velX) >= tempObj.getX() && handler.sameY_Range(this, tempObj)) {
 				isCollision[2] = 1;
+
+				collisionRect = outlineObject(tempObj);
 			}
 
 			// Tests y's will intersect and are in the same x range (Above)
 			if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight() && handler.sameX_Range(this, tempObj)) {
 				isCollision[2] = 1;
+
+				collisionRect = outlineObject(tempObj);
 			}
 
 			// Tests y's will intersect and are in the same x range (Below)
 			if ((this.y + velY) >= tempObj.getY() && handler.sameX_Range(this, tempObj)) {
 				isCollision[3] = 1;
-				
-				t = 0; //Unique. If something is below, this will stop the jump method.
+
+				collisionRect = outlineObject(tempObj);
 			}
 
 		}
 
 		return isCollision;
+	}
+
+	private Rectangle outlineObject(GameObject obj) {
+		// TODO Auto-generated method stub
+		
+		System.out.println("\n" + obj.getClass());
+		System.out.println("X-range: " + obj.getX() + " to " + (obj.getX() + obj.getWidth()));
+		System.out.println("Y-range: " + obj.getY() + " to " + (obj.getY() + obj.getHeight()));
+		System.out.println("Player's info:");
+		System.out.println("X-range: " + this.getX() + " to " + (this.getX() + this.getWidth()));
+		System.out.println("Y-range: " + this.getY() + " to " + (this.getY() + this.getHeight()));
+		
+		return new Rectangle(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
+		
 	}
 
 	@Override
@@ -336,12 +366,12 @@ public class Player extends GameObject implements KeyListener {
 		this.accel = accel;
 	}
 
-	public double getT() {
-		return t;
+	public double getTime() {
+		return time;
 	}
 
 	public void setT(double t) {
-		this.t = t;
+		this.time = t;
 	}
 
 	public double getTimer() {
