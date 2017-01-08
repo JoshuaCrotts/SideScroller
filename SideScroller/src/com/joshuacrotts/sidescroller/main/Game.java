@@ -142,7 +142,7 @@ public class Game extends Canvas implements Runnable{
 		levels[0].tick();
 		handler.tick();
 		
-		System.out.println("py: "+player.getY());
+		//System.out.println("py: "+player.getY());
 		
 		for(int i = 0; i<handler.getEntities().size(); i++){
 			if(handler.getEntities().get(i).getId() == ID.Player){

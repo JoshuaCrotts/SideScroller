@@ -36,7 +36,7 @@ public class Player extends GameObject implements KeyListener {
 
 	// Sprites
 	public static BufferedImage currentSprite;
-	public static BufferedImage stillSprite;
+	public static BufferedImage stillSprite; //Standing still
 	private ArrayList<BufferedImage> rSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> lSprites = new ArrayList<BufferedImage>();
 
@@ -123,11 +123,18 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 
+		int[] collisions = testForCollisions(handler.getEntities());
+		
+		if (collisions[0] == 1 || collisions[1] == 1){ //Left or right collisions
+			velX = 0;
+		}
+		if (collisions[2] == 1 || collisions[3] == 1){ //Top or bottom collisions
+			velY = 0;
+		}
+
 		// System.out.println(x);
 		this.x += velX;
 		this.y += velY;
-
-		collision(handler.getEntities());
 
 	}
 
@@ -144,13 +151,13 @@ public class Player extends GameObject implements KeyListener {
 		g2.draw(getBoundsTop());
 	}
 
-	private int[] collision(ArrayList<GameObject> arrayList) {
+	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
 
-		for (int i : isCollision){ //reset isCollision array
+		for (int i : isCollision) { // reset isCollision array
 			i = 0;
 		}
 
-		//Test for collisions with each object
+		// Test for collisions with each object
 		for (int i = 0; i < handler.getEntities().size(); i++) {
 
 			GameObject tempObj = handler.getEntities().get(i);
@@ -173,6 +180,8 @@ public class Player extends GameObject implements KeyListener {
 			// Tests y's will intersect and are in the same x range (Below)
 			if ((this.y + velY) >= tempObj.getY() && handler.sameX_Range(this, tempObj)) {
 				isCollision[3] = 1;
+				
+				t = 0; //Unique. If something is below, this will stop the jump method.
 			}
 
 		}
