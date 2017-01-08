@@ -16,6 +16,9 @@ import javax.imageio.ImageIO;
 
 public class Player extends GameObject implements KeyListener {
 
+	// {left, right, above, below} relative to player
+	int[] isCollision = { 0, 0, 0, 0 };
+
 	public static int x;
 	private static int y;
 
@@ -41,6 +44,7 @@ public class Player extends GameObject implements KeyListener {
 	private Animator rAnimator;
 	private Animator lAnimator;
 
+	// Physics
 	private int velyInit = 4;
 	private double accel = .1;
 	private double t = 0;
@@ -142,23 +146,25 @@ public class Player extends GameObject implements KeyListener {
 
 	private int[] collision(ArrayList<GameObject> arrayList) {
 
-		int[] isCollision = { 0, 0, 0, 0 }; // {left, right, above, below}
-											// relative to player
+		for (int i : isCollision){ //reset isCollision array
+			i = 0;
+		}
 
+		//Test for collisions with each object
 		for (int i = 0; i < handler.getEntities().size(); i++) {
 
 			GameObject tempObj = handler.getEntities().get(i);
 
-			//Tests x's will intersect and are in the same y range (Right)
-			if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth()) && handler.sameY_Range(this, tempObj)){
+			// Tests x's will intersect and are in the same y range (Right)
+			if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth()) && handler.sameY_Range(this, tempObj)) {
 				isCollision[1] = 1;
 			}
-			
-			//Tests x's will intersect and are in the same y range (Right)
-			if ((this.x + velX) >= tempObj.getX() && handler.sameY_Range(this, tempObj)){
+
+			// Tests x's will intersect and are in the same y range (Right)
+			if ((this.x + velX) >= tempObj.getX() && handler.sameY_Range(this, tempObj)) {
 				isCollision[2] = 1;
 			}
-			
+
 			// Tests y's will intersect and are in the same x range (Above)
 			if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight() && handler.sameX_Range(this, tempObj)) {
 				isCollision[2] = 1;
@@ -168,7 +174,7 @@ public class Player extends GameObject implements KeyListener {
 			if ((this.y + velY) >= tempObj.getY() && handler.sameX_Range(this, tempObj)) {
 				isCollision[3] = 1;
 			}
-			
+
 		}
 
 		return isCollision;
