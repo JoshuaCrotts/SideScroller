@@ -41,8 +41,8 @@ public class Player extends GameObject implements KeyListener{
 	private Animator rAnimator;
 	private Animator lAnimator;
 	
-	private int velyInit = 15;
-	private int accel = -20;
+	private int velyInit = 4;
+	private double accel = .1;
 	private double t = 0;
 	
 	private int hVel = 5;
@@ -78,10 +78,6 @@ public class Player extends GameObject implements KeyListener{
 
 	public void tick(){
 		
-		//System.out.println(x);
-		this.x += velX;
-		this.y += velY;
-		
 		if(lastDirection.equals("left")){
 			this.stillSprite = lSprites.get(0);
 		}else if(lastDirection.equals("right")){
@@ -106,16 +102,10 @@ public class Player extends GameObject implements KeyListener{
 		}
 		
 		if (jumping) { // This probably needs to go in the counter.
-			if(timer <= 0.00){
-				velY = timer;
-				timer+=.6;
-			}else{
-				velY = 0;
-				timer = 0;
-				jumping = false;
-				falling = true;
-				
-			}
+			t++;
+			velY = velyInit - (accel*t);
+			velY *= -1;
+			
 		}
 		
 		if(falling){
@@ -130,6 +120,10 @@ public class Player extends GameObject implements KeyListener{
 				this.y = Game.HEIGHT - (currentSprite.getHeight()+(currentSprite.getHeight()/2));
 			}
 		}
+		
+		//System.out.println(x);
+		this.x += velX;
+		this.y += velY;
 		
 		collision(handler.getEntities());
 		
@@ -151,6 +145,9 @@ public class Player extends GameObject implements KeyListener{
 	}
 	
 	private void collision(ArrayList<GameObject> arrayList){
+		
+		int[] isCollision = {0, 0, 0, 0}; // {left, right, above, below}
+		
 		for(int i = 0; i<handler.getEntities().size(); i++){
 			
 			GameObject tempObj = handler.getEntities().get(i);
@@ -313,7 +310,7 @@ public class Player extends GameObject implements KeyListener{
 		this.velyInit = velyInit;
 	}
 
-	public int getAccel() {
+	public double getAccel() {
 		return accel;
 	}
 
