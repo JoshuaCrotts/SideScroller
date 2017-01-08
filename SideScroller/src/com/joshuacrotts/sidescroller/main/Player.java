@@ -89,7 +89,7 @@ public class Player extends GameObject implements KeyListener{
 			velX = -hVel;
 			lastDirection = "left";
 		}
-		else if(right){
+		if(right){
 			rAnimator.animate();
 			velX = hVel;
 			lastDirection = "right";
@@ -141,6 +141,7 @@ public class Player extends GameObject implements KeyListener{
 		}
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
+		g2.setColor(Color.BLUE);
 		g2.draw(getBoundsTop());
 	}
 	
