@@ -147,6 +147,7 @@ public class Player extends GameObject implements KeyListener{
 		}
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
+		g2.setColor(Color.BLUE);
 		g2.draw(getBoundsTop());
 	}
 	
