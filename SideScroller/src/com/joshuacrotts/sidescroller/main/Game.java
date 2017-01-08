@@ -4,8 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
 import java.util.Random;
 
 import com.joshuacrotts.sidescroller.enemies.BasicEnemy;
@@ -30,7 +30,9 @@ public class Game extends Canvas implements Runnable{
 	//Objects
 	private Player player;
 
+	//Etc objects
 	private Random randomInt = new Random();
+	private Camera camera;
 	
 	//Levels
 	private Level[] levels;
@@ -56,9 +58,10 @@ public class Game extends Canvas implements Runnable{
 
 		//Initializes the Handlers needed for essentially everything and the Menu for the menus. 
 		handler = new Handler(this);
+		this.camera = new Camera(0,0);
 		this.window = new Window(WIDTH,HEIGHT, "Game", this);
 		this.levels = new Level[1];
-		this.player = new Player(624, 624, ID.Player, handler, this, levels);
+		this.player = new Player(640, 624, ID.Player, handler, this, levels);
 		
 		this.addLevels();
 		this.addEnemies();
@@ -130,19 +133,17 @@ public class Game extends Canvas implements Runnable{
 	 * main classes such as HUD and Spawner
 	 */
 	private void tick(){
-		System.out.println("Px :"+player.getX());
-		System.out.println("levelx :"+levels[0].getX());
+		//System.out.println("Px :"+player.getX());
+		//System.out.println("levelx :"+levels[0].getX());
+		
 		levels[0].tick();
 		handler.tick();
-//		//Player can't go more forward
-//		if ((player.getX() - levels[0].getX() <= 0))
-//			player.setX(levels[0].getX());
-//		
-//		if(player.getX() < SCROLLSPOT){
-//			levels[0].stopScroll();
-//		}else{
-//			levels[0].scrollLevel(player.getX()*2);
-//		}
+		
+		for(int i = 0; i<handler.getEntities().size(); i++){
+			if(handler.getEntities().get(i).getId() == ID.Player){
+				camera.tick(handler.getEntities().get(i));
+			}
+		}
 	
 	}
 
@@ -162,14 +163,19 @@ public class Game extends Canvas implements Runnable{
 		}
 
 		Graphics g = bs.getDrawGraphics();
+		Graphics2D g2 = (Graphics2D) g;
 		//DRAW HERE
+		
 		
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), HEIGHT);
 		
+		g2.translate(camera.getX(), camera.getY()); //begin of cam
 		
 		levels[0].render(g);
 		handler.render(g);
+		
+		g2.translate(-camera.getX(), -camera.getY()); //end of camera
 		
 		//FPS drawer
 		Font f = new Font("Arial",Font.BOLD,14);
@@ -177,6 +183,8 @@ public class Game extends Canvas implements Runnable{
 		g.setColor(Color.RED);
 		g.drawString("Side Scroller Indev", 10, 20);
 		g.drawString("FPS: "+currentFPS, 10, 40);
+		
+		
 		
 		//END DRAWING
 
@@ -199,7 +207,7 @@ public class Game extends Canvas implements Runnable{
 	}
 	
 	private void addEnemies(){
-		this.levels[0].add(new BasicEnemy(300,924, this,handler,player));
+		this.levels[0].add(new BasicEnemy(300,624, this,handler,player));
 	}
 
 	public static void main(String[] args) {

@@ -160,12 +160,12 @@ public class Player extends GameObject implements KeyListener{
 		
 		if(keyCode == KeyEvent.VK_A){
 			left = true;
-			levels[0].setX(levels[0].getX() -14);
+			//levels[0].setX(levels[0].getX() -14);
 		}
 		
 		if(keyCode == KeyEvent.VK_D){
 			right = true;
-			levels[0].setX(levels[0].getX() +14);
+			//levels[0].setX(levels[0].getX() +14);
 		}
 		
 		if(keyCode == KeyEvent.VK_SPACE){

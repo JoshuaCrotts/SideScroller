@@ -28,6 +28,8 @@ public class Level {
 	
 	private boolean scrolling = false;
 	
+	public static int minView, maxView;
+	
 	public Level(String fileLocation, Game game, Handler handler){
 		this.x = 0;
 		this.y = 0;
@@ -44,22 +46,6 @@ public class Level {
 		}
 	}
 	
-	public void scrollLevel(int playerPosition)
-	{
-		//this.x = playerPosition - Game.SCROLLSPOT;
-		this.x = Game.SCROLLSPOT - playerPosition;
-	}
-	
-	public void scrollLevel()
-	{
-		this.scrolling = true;
-	}
-	
-	public void stopScroll(){
-		this.x = x;
-		this.scrolling = false;
-	}
-	
 	public void tick(){
 		
 	}
@@ -67,8 +53,7 @@ public class Level {
 	
 	public void render(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
-		
-		g2.drawImage(this.image, x, 0, null);
+		g2.drawImage(this.image, 0, 0, null);
 	}
 
 	public void add(Enemy e){
