@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
@@ -130,7 +131,7 @@ public class Player extends GameObject implements KeyListener{
 			}
 		}
 		
-		
+		collision(handler.getEntities());
 		
 		
 	}
@@ -146,6 +147,33 @@ public class Player extends GameObject implements KeyListener{
 		}
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
+		g2.draw(getBoundsTop());
+	}
+	
+	private void collision(ArrayList<GameObject> arrayList){
+		for(int i = 0; i<handler.getEntities().size(); i++){
+			
+			GameObject tempObj = handler.getEntities().get(i);
+			
+			if(tempObj.getId() == ID.Block){
+				//System.out.println(this.height);
+				
+				if(getBoundsTop().intersects(tempObj.getBounds())){
+					y = tempObj.getY() + (64/2);
+				}
+				
+				if(getBounds().intersects(tempObj.getBounds())){
+					System.out.println("collision??");
+					y = tempObj.getY() - 66;
+					velY = 0;
+					
+					falling = false;
+					jumping = false;
+				}else{
+					
+				}
+			}
+		}
 	}
 
 	@Override
@@ -314,6 +342,10 @@ public class Player extends GameObject implements KeyListener{
 		// TODO Auto-generated method stub
 		return new Rectangle(x,y,currentSprite.getWidth(),currentSprite.getHeight());
 		
+	}
+	
+	public Rectangle getBoundsTop(){
+		return new Rectangle(x,y,currentSprite.getWidth(),(currentSprite.getHeight()-currentSprite.getHeight()+1));
 	}
 	
 	public boolean isMoving(){

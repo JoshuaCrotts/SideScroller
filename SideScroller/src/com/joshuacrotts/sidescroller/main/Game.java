@@ -6,8 +6,10 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
+import com.joshuacrotts.sidescroller.blocks.Block;
 import com.joshuacrotts.sidescroller.enemies.BasicEnemy;
 
 public class Game extends Canvas implements Runnable{
@@ -61,10 +63,11 @@ public class Game extends Canvas implements Runnable{
 		this.camera = new Camera(0,0);
 		this.window = new Window(WIDTH,HEIGHT, "Game", this);
 		this.levels = new Level[1];
-		this.player = new Player(640, 624, ID.Player, handler, this, levels);
+		this.player = new Player(90, 500, ID.Player, handler, this, levels);
 		
 		this.addLevels();
-		this.addEnemies();
+		this.loadImageLevel(levels[0].getImage());
+	//	this.addEnemies();
 		this.addKeyListener(player);
 		this.start();
 
@@ -139,6 +142,8 @@ public class Game extends Canvas implements Runnable{
 		levels[0].tick();
 		handler.tick();
 		
+		System.out.println("py: "+player.getY());
+		
 		for(int i = 0; i<handler.getEntities().size(); i++){
 			if(handler.getEntities().get(i).getId() == ID.Player){
 				camera.tick(handler.getEntities().get(i));
@@ -191,6 +196,35 @@ public class Game extends Canvas implements Runnable{
 		g.dispose();
 		bs.show();
 	}
+	
+	private void loadImageLevel(BufferedImage image){
+		int w = image.getWidth();
+		int h = image.getHeight();
+		
+		for(int x = 0; x<w; x++){
+			for(int y = 0; y<h; y++){
+				int pixel = image.getRGB(x, y);
+				
+				int r = (pixel >> 16) & 0xff;
+				int g = (pixel >> 8) & 0xff;
+				int b = (pixel) & 0xff;
+				
+				if(r == 255 && g == 255 && b == 255){
+					handler.add(new Block(x*32,y*32,"img/sprites/items/block1.png",handler,this,player));
+				}
+				if(r == 0 && g == 0 && b == 0){
+					Color c = Color.BLACK;
+					image.setRGB(x, y, c.getRGB());
+				}
+				
+			//	if(r == 0 && g == 0 && b == 255){
+			//		handler.add(new Player(640, 624, ID.Player, handler, this, levels));
+			//	}
+			}
+		}
+		
+		
+	}
 
 	public static float clamp(float var, float min, float max){
 		if(var >= max){
@@ -203,7 +237,7 @@ public class Game extends Canvas implements Runnable{
 			return var;
 	}
 	private void addLevels(){
-		this.levels[0] = new Level("img/backgrounds/l1.png",this, handler);
+		this.levels[0] = new Level("img/backgrounds/level1.png",this, handler);
 	}
 	
 	private void addEnemies(){
