@@ -63,7 +63,7 @@ public class Game extends Canvas implements Runnable{
 		this.camera = new Camera(0,0);
 		this.window = new Window(WIDTH,HEIGHT, "Game", this);
 		this.levels = new Level[1];
-		this.player = new Player(90, 500, ID.Player, handler, this, levels);
+		this.player = new Player(90, 500, ID.Player, handler, this);
 		
 		this.addLevels();
 		this.loadImageLevel(levels[0].getImage());
@@ -142,7 +142,7 @@ public class Game extends Canvas implements Runnable{
 		levels[0].tick();
 		handler.tick();
 		
-		System.out.println("py: "+player.getY());
+		//System.out.println("py: "+player.getY());
 		
 		for(int i = 0; i<handler.getEntities().size(); i++){
 			if(handler.getEntities().get(i).getId() == ID.Player){

@@ -1,6 +1,5 @@
 package com.joshuacrotts.sidescroller.main;
 
-import javafx.animation.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -13,7 +12,7 @@ public class Animator{
 	private int frame = 0;
 	private GameObject object;
 	
-	public static int attackCounter = 0;
+	//public static int attackCounter = 0;
 
 	private boolean animating = false;
 
@@ -27,12 +26,7 @@ public class Animator{
 		this.animating = true;
 		for(int i = 0; i<images.size(); i++){
 			counter++;
-			
-			if(Player.attacking) 
-				attackCounter++;
-			//System.out.println(counter);
-			if(counter > delay){
-				
+			if(counter > delay){			
 				object.currentSprite = this.images.get(i);
 				counter = 0;
 			}

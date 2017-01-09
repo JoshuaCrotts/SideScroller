@@ -2,6 +2,7 @@ package com.joshuacrotts.sidescroller.enemies;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class BasicEnemy extends Enemy{
 	public BufferedImage stillSprite;
 	public BufferedImage currentSprite;
 	
-	private int velX = 2;
+	private int velX;
 	private int velY;
 	
 	private String lastDirection;
@@ -47,8 +48,6 @@ public class BasicEnemy extends Enemy{
 		this.handler = handler;
 		this.game = game;
 		this.player = player;
-		
-		
 		
 		this.rSprites = new ArrayList<BufferedImage>();
 		this.lSprites = new ArrayList<BufferedImage>();
@@ -110,9 +109,23 @@ public class BasicEnemy extends Enemy{
 				rSprites.add(ImageIO.read(new File("img/sprites/p/r/r"+i+".png")));
 				lSprites.add(ImageIO.read(new File("img/sprites/p/l/l"+i+".png")));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public int getWidth() {
+		return 0;
+	}
+
+	@Override
+	public int getHeight() {
+		return 0;
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return null;
 	}
 }
