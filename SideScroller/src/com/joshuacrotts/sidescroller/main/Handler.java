@@ -39,13 +39,13 @@ public class Handler {
 		double lowerBound = obj1.getX() + obj1.getVelX();
 		double upperBound = lowerBound + obj1.getWidth();
 
-		if (lowerBound < obj2.getX() && obj2.getX() < upperBound) {
+		if (lowerBound <= obj2.getX() && obj2.getX() <= upperBound) {
 			return true;
 		}
-		if (lowerBound < (obj2.getX() + obj2.getWidth()) && (obj2.getX() + obj2.getWidth()) < upperBound) {
+		if (lowerBound <= (obj2.getX() + obj2.getWidth()) && (obj2.getX() + obj2.getWidth()) <= upperBound) {
 			return true;
 		}
-		if (obj2.getX() < lowerBound && obj2.getX() + obj2.getWidth() > upperBound) {
+		if (obj2.getX() <= lowerBound && obj2.getX() + obj2.getWidth() >= upperBound) {
 			return true;
 		}
 

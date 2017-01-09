@@ -5,14 +5,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
@@ -33,7 +31,7 @@ public class Player extends GameObject implements KeyListener {
 
 	private boolean jumping = false;
 	private boolean falling = false;
-	//Recommend this be changed to private and not static. Doesn't make sense.
+	// Recommend this be changed to private and not static. Doesn't make sense.
 	public static boolean attacking = false;
 	private boolean right, left;
 	private String lastDirection;
@@ -49,8 +47,8 @@ public class Player extends GameObject implements KeyListener {
 	private Animator lAnimator;
 
 	// Physics
-	private int velyInit = 4;
-	private double accel = .1;
+	private int velyInit = 6;
+	private double accel = .3;
 	private double time = 0;
 
 	private int hVel = 5;
@@ -71,8 +69,8 @@ public class Player extends GameObject implements KeyListener {
 		this.rAnimator = new Animator(rSprites, 30, this);
 		this.lAnimator = new Animator(lSprites, 30, this);
 		this.lastDirection = "right";
-		this.stillSprite = rSprites.get(0);
-		this.currentSprite = stillSprite;
+		stillSprite = rSprites.get(0);
+		currentSprite = stillSprite;
 
 		this.handler = handler;
 		this.game = game;
@@ -83,9 +81,9 @@ public class Player extends GameObject implements KeyListener {
 	public void tick() {
 
 		if (lastDirection.equals("left")) {
-			this.stillSprite = lSprites.get(0);
+			stillSprite = lSprites.get(0);
 		} else if (lastDirection.equals("right")) {
-			this.stillSprite = rSprites.get(0);
+			stillSprite = rSprites.get(0);
 		}
 
 		if (left) {
@@ -107,8 +105,6 @@ public class Player extends GameObject implements KeyListener {
 		if (jumping) { // This probably needs to go in the counter.
 			time++;
 			velY = -(velyInit - (accel * time));
-			velY *= -1;
-
 		}
 
 		if (falling) {
@@ -130,9 +126,10 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 
-		System.out.println("Player Width: " + this.getWidth());
-
 		for (int i = 0; i < collisions.length; i++) {
+			if (i == 0) {
+				System.out.println();
+			}
 			System.out.println("Index " + i + " is: " + collisions[i]);
 		}
 
@@ -169,20 +166,21 @@ public class Player extends GameObject implements KeyListener {
 
 		// Test for collisions with each object
 		for (int i = 0; i < handler.getEntities().size(); i++) {
-			
+
 			GameObject tempObj = handler.getEntities().get(i);
-			
-			if (tempObj.id == ID.Player){
+
+			// Obviously there will be a collision with the player's self.
+			if (tempObj.id == ID.Player) {
 				continue;
 			}
-			
-			//If there will be a collision
-			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)){
+
+			// If there will be a collision
+			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)) {
 				
 				// Tests x's will intersect and are in the same y range (Left)
 				if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth())) {
 					isCollision[0] = 1;
-					
+
 					collisionRect = outlineObject(tempObj);
 				}
 
@@ -212,6 +210,9 @@ public class Player extends GameObject implements KeyListener {
 	}
 
 	private Rectangle outlineObject(GameObject obj) {
+		
+		System.out.println(obj.getClass());
+		
 		return new Rectangle(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
 	}
 
@@ -316,16 +317,8 @@ public class Player extends GameObject implements KeyListener {
 		return width;
 	}
 
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
 	public int getHeight() {
 		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
 	}
 
 	public boolean isJumping() {
