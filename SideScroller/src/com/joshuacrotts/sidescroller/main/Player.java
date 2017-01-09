@@ -18,7 +18,6 @@ public class Player extends GameObject implements KeyListener {
 
 	// {left, right, above, below} relative to player
 	int[] isCollision = { 0, 0, 0, 0 };
-	Rectangle collisionRect = new Rectangle(0, 0, 10, 10);
 
 	public int x;
 	private int y;
@@ -107,7 +106,7 @@ public class Player extends GameObject implements KeyListener {
 			velY = -(velyInit - (accel * time));
 		}
 
-		if (falling) {
+		else if (falling) {
 			velY = accel * time;
 		}
 
@@ -117,15 +116,26 @@ public class Player extends GameObject implements KeyListener {
 														// collisions
 			velX = 0;
 		}
+		
 		if (collisions[2] == 1 || collisions[3] == 1) { // Top or bottom
 														// collisions
 			velY = 0;
 			time = 0;
 			if (collisions[2] == 1) {
 				falling = true;
+				jumping = false;
+			}
+			if (collisions[3] == 1){
+				jumping = false;
 			}
 		}
-
+		
+		//If nothing below, start falling
+		if (collisions[3] == 0 && jumping == false){
+			falling = true;
+		}
+		
+		//Print out collisions array
 		for (int i = 0; i < collisions.length; i++) {
 			if (i == 0) {
 				System.out.println();
@@ -149,12 +159,6 @@ public class Player extends GameObject implements KeyListener {
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
 		g2.draw(getBoundsTop());
-
-		// Debugging collisions
-		g2.setColor(Color.GREEN);
-		g2.setStroke(new BasicStroke(10));
-		g2.draw(collisionRect);
-		g2.setStroke(new BasicStroke(2));
 	}
 
 	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
@@ -176,44 +180,29 @@ public class Player extends GameObject implements KeyListener {
 
 			// If there will be a collision
 			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)) {
-				
+
 				// Tests x's will intersect and are in the same y range (Left)
 				if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth())) {
 					isCollision[0] = 1;
-
-					collisionRect = outlineObject(tempObj);
 				}
 
 				// Tests x's will intersect and are in the same y range (Right)
 				if ((this.x + this.getWidth() + velX) >= tempObj.getX()) {
 					isCollision[1] = 1;
-
-					collisionRect = outlineObject(tempObj);
 				}
 
 				// Tests y's will intersect and are in the same x range (Above)
 				if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight()) {
 					isCollision[2] = 1;
-
-					collisionRect = outlineObject(tempObj);
 				}
 
 				// Tests y's will intersect and are in the same x range (Below)
 				if ((this.y + this.getHeight() + velY) >= tempObj.getY()) {
 					isCollision[3] = 1;
-
-					collisionRect = outlineObject(tempObj);
 				}
 			}
 		}
 		return isCollision;
-	}
-
-	private Rectangle outlineObject(GameObject obj) {
-		
-		System.out.println(obj.getClass());
-		
-		return new Rectangle(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
 	}
 
 	@Override
@@ -221,6 +210,7 @@ public class Player extends GameObject implements KeyListener {
 		int keyCode = e.getKeyCode();
 
 		if (keyCode == KeyEvent.VK_W) {
+			
 			if (jumping)
 				return;
 			else
