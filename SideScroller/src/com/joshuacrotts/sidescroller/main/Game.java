@@ -63,7 +63,7 @@ public class Game extends Canvas implements Runnable{
 		this.camera = new Camera(0,0);
 		this.window = new Window(WIDTH,HEIGHT, "Game", this);
 		this.levels = new Level[1];
-		this.player = new Player(90, 500, ID.Player, handler, this, levels);
+		this.player = new Player(90, 500, ID.Player, handler, this);
 		
 		this.addLevels();
 		this.loadImageLevel(levels[0].getImage());

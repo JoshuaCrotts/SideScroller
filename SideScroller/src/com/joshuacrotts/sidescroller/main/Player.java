@@ -17,29 +17,30 @@ import java.util.LinkedList;
 import javax.imageio.ImageIO;
 
 public class Player extends GameObject implements KeyListener {
-	
+
 	// {left, right, above, below} relative to player
 	int[] isCollision = { 0, 0, 0, 0 };
 	Rectangle collisionRect = new Rectangle(0, 0, 10, 10);
 
-	public static int x;
-	private static int y;
+	public int x;
+	private int y;
 
 	private double velX;
 	private double velY;
 
-	private int width;
-	private int height;
+	public static int width = 64;
+	public static int height = 64;
 
 	private boolean jumping = false;
 	private boolean falling = false;
+	//Recommend this be changed to private and not static. Doesn't make sense.
 	public static boolean attacking = false;
 	private boolean right, left;
 	private String lastDirection;
 
 	// Sprites
 	public static BufferedImage currentSprite;
-	public static BufferedImage stillSprite; //Standing still
+	public static BufferedImage stillSprite; // Standing still
 	private ArrayList<BufferedImage> rSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> lSprites = new ArrayList<BufferedImage>();
 
@@ -59,12 +60,10 @@ public class Player extends GameObject implements KeyListener {
 	private Handler handler;
 	private Game game;
 
-	private Level[] levels;
-
-	public Player(int x, int y, ID id, Handler handler, Game game, Level[] levels) {
+	public Player(int x, int y, ID id, Handler handler, Game game) {
 		super();
 		super.setId(id);
-		
+
 		this.x = x;
 		this.y = y;
 
@@ -74,8 +73,6 @@ public class Player extends GameObject implements KeyListener {
 		this.lastDirection = "right";
 		this.stillSprite = rSprites.get(0);
 		this.currentSprite = stillSprite;
-
-		this.levels = levels;
 
 		this.handler = handler;
 		this.game = game;
@@ -119,25 +116,26 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		int[] collisions = testForCollisions(handler.getEntities());
-		
-		if (collisions[0] == 1 || collisions[1] == 1){ //Left or right collisions
+
+		if (collisions[0] == 1 || collisions[1] == 1) { // Left or right
+														// collisions
 			velX = 0;
 		}
-		if (collisions[2] == 1 || collisions[3] == 1){ //Top or bottom collisions
+		if (collisions[2] == 1 || collisions[3] == 1) { // Top or bottom
+														// collisions
 			velY = 0;
 			time = 0;
-			if (collisions[2] == 1){
+			if (collisions[2] == 1) {
 				falling = true;
 			}
 		}
-		
-		System.out.println(this.getWidth());
-		
-/*
-		for (int i = 0; i < collisions.length; i++){
+
+		System.out.println("Player Width: " + this.getWidth());
+
+		for (int i = 0; i < collisions.length; i++) {
 			System.out.println("Index " + i + " is: " + collisions[i]);
 		}
-		*/
+
 		this.x += velX;
 		this.y += velY;
 
@@ -154,7 +152,8 @@ public class Player extends GameObject implements KeyListener {
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
 		g2.draw(getBoundsTop());
-		
+
+		// Debugging collisions
 		g2.setColor(Color.GREEN);
 		g2.setStroke(new BasicStroke(10));
 		g2.draw(collisionRect);
@@ -163,60 +162,57 @@ public class Player extends GameObject implements KeyListener {
 
 	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
 
-		for (int i : isCollision) { // reset isCollision array
-			i = 0;
+		// Reset array.
+		for (int i = 0; i < isCollision.length; i++) {
+			isCollision[i] = 0;
 		}
 
 		// Test for collisions with each object
 		for (int i = 0; i < handler.getEntities().size(); i++) {
-
+			
 			GameObject tempObj = handler.getEntities().get(i);
-
-			// Tests x's will intersect and are in the same y range (Right)
-			if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth()) && handler.sameY_Range(this, tempObj)) {
-				isCollision[1] = 1;
+			
+			if (tempObj.id == ID.Player){
+				continue;
+			}
+			
+			//If there will be a collision
+			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)){
 				
-				collisionRect = outlineObject(tempObj);
+				// Tests x's will intersect and are in the same y range (Left)
+				if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth())) {
+					isCollision[0] = 1;
+					
+					collisionRect = outlineObject(tempObj);
+				}
+
+				// Tests x's will intersect and are in the same y range (Right)
+				if ((this.x + this.getWidth() + velX) >= tempObj.getX()) {
+					isCollision[1] = 1;
+
+					collisionRect = outlineObject(tempObj);
+				}
+
+				// Tests y's will intersect and are in the same x range (Above)
+				if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight()) {
+					isCollision[2] = 1;
+
+					collisionRect = outlineObject(tempObj);
+				}
+
+				// Tests y's will intersect and are in the same x range (Below)
+				if ((this.y + this.getHeight() + velY) >= tempObj.getY()) {
+					isCollision[3] = 1;
+
+					collisionRect = outlineObject(tempObj);
+				}
 			}
-
-			// Tests x's will intersect and are in the same y range (Right)
-			if ((this.x + velX) >= tempObj.getX() && handler.sameY_Range(this, tempObj)) {
-				isCollision[2] = 1;
-
-				collisionRect = outlineObject(tempObj);
-			}
-
-			// Tests y's will intersect and are in the same x range (Above)
-			if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight() && handler.sameX_Range(this, tempObj)) {
-				isCollision[2] = 1;
-
-				collisionRect = outlineObject(tempObj);
-			}
-
-			// Tests y's will intersect and are in the same x range (Below)
-			if ((this.y + velY) >= tempObj.getY() && handler.sameX_Range(this, tempObj)) {
-				isCollision[3] = 1;
-
-				collisionRect = outlineObject(tempObj);
-			}
-
 		}
-
 		return isCollision;
 	}
 
 	private Rectangle outlineObject(GameObject obj) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("\n" + obj.getClass());
-		System.out.println("X-range: " + obj.getX() + " to " + (obj.getX() + obj.getWidth()));
-		System.out.println("Y-range: " + obj.getY() + " to " + (obj.getY() + obj.getHeight()));
-		System.out.println("Player's info:");
-		System.out.println("X-range: " + this.getX() + " to " + (this.getX() + this.getWidth()));
-		System.out.println("Y-range: " + this.getY() + " to " + (this.getY() + this.getHeight()));
-		
 		return new Rectangle(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
-		
 	}
 
 	@Override
@@ -270,7 +266,6 @@ public class Player extends GameObject implements KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -280,7 +275,6 @@ public class Player extends GameObject implements KeyListener {
 				rSprites.add(ImageIO.read(new File("img/sprites/p/r/r" + i + ".png")));
 				lSprites.add(ImageIO.read(new File("img/sprites/p/l/l" + i + ".png")));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -384,7 +378,6 @@ public class Player extends GameObject implements KeyListener {
 
 	@Override
 	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
 		return new Rectangle(x, y, currentSprite.getWidth(), currentSprite.getHeight());
 
 	}
@@ -395,6 +388,10 @@ public class Player extends GameObject implements KeyListener {
 
 	public boolean isMoving() {
 		return left || right;
+	}
+
+	public boolean isAttacking() {
+		return attacking;
 	}
 
 	public boolean goingLeft() {
