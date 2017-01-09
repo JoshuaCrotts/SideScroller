@@ -22,6 +22,8 @@ public class Player extends GameObject implements KeyListener {
 	public int x;
 	private int y;
 
+	//please tell me this makes a fucking change
+	
 	private double velX;
 	private double velY;
 
@@ -108,6 +110,7 @@ public class Player extends GameObject implements KeyListener {
 
 		else if (falling) {
 			time++;
+			System.out.println("THANK GOD");
 			velY = accel * time;
 		}
 
