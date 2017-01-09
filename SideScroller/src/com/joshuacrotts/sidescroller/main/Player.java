@@ -107,6 +107,7 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		else if (falling) {
+			time++;
 			velY = accel * time;
 		}
 
@@ -168,6 +169,8 @@ public class Player extends GameObject implements KeyListener {
 			isCollision[i] = 0;
 		}
 
+		boolean allFourSidesCollisions = false;
+		
 		// Test for collisions with each object
 		for (int i = 0; i < handler.getEntities().size(); i++) {
 
