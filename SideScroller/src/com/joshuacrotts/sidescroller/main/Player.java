@@ -340,6 +340,8 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 	}
+	
+	//just a comment to make it not a clean branch
 
 	public int getX() {
 		return x;
