@@ -23,7 +23,7 @@ public class Player extends GameObject implements KeyListener {
 	private int y;
 
 	//please tell me this makes a fucking change
-	
+
 	private double velX;
 	private double velY;
 
@@ -104,25 +104,28 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		if (jumping) { // This probably needs to go in the counter.
-			time++;
+			time+=.5;
 			velY = -(velyInit - (accel * time));
 		}
 
 		else if (falling) {
-			time++;
-			System.out.println("THANK GOD");
+			time++; //increments the timer and allows for the Player to fall
 			velY = accel * time;
 		}
 
+
+		//int[] collisions = testForNewCollisions(handler.getEntities());
+
+		//Collisions With Indexes Method 
 		int[] collisions = testForCollisions(handler.getEntities());
 
 		if (collisions[0] == 1 || collisions[1] == 1) { // Left or right
-														// collisions
+			// collisions
 			velX = 0;
 		}
-		
+
 		if (collisions[2] == 1 || collisions[3] == 1) { // Top or bottom
-														// collisions
+			// collisions
 			velY = 0;
 			time = 0;
 			if (collisions[2] == 1) {
@@ -133,12 +136,25 @@ public class Player extends GameObject implements KeyListener {
 				jumping = false;
 			}
 		}
-		
+
 		//If nothing below, start falling
 		if (collisions[3] == 0 && jumping == false){
 			falling = true;
 		}
-		
+
+		if(collisions[2] == 1){
+			velY = 0;
+			time = 0;
+			jumping = false;
+			falling = true;
+		}
+
+		if(collisions[3] == 1){
+			jumping = false;
+		}
+
+
+
 		//Print out collisions array
 		for (int i = 0; i < collisions.length; i++) {
 			if (i == 0) {
@@ -146,6 +162,9 @@ public class Player extends GameObject implements KeyListener {
 			}
 			System.out.println("Index " + i + " is: " + collisions[i]);
 		}
+
+		System.out.println("x: "+x);
+		System.out.println("y: "+y);
 
 		this.x += velX;
 		this.y += velY;
@@ -162,7 +181,14 @@ public class Player extends GameObject implements KeyListener {
 		}
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
+		g2.setColor(Color.BLUE);
 		g2.draw(getBoundsTop());
+		g2.setColor(Color.green);
+		g2.draw(getBoundsBottom());
+		g2.setColor(Color.ORANGE);
+		g2.draw(getBoundsLeft());
+		g2.setColor(Color.yellow);
+		g2.draw(getBoundsRight());
 	}
 
 	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
@@ -183,38 +209,78 @@ public class Player extends GameObject implements KeyListener {
 			}
 
 			// If there will be a collision
-			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)) {
+			if(tempObj.id == ID.Block){
 
-				// Tests x's will intersect and are in the same y range (Left)
-				if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth())) {
-					isCollision[0] = 1;
-				}
+				if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)) {
 
-				// Tests x's will intersect and are in the same y range (Right)
-				if ((this.x + this.getWidth() + velX) >= tempObj.getX()) {
-					isCollision[1] = 1;
-				}
+					// Tests x's will intersect and are in the same y range (Left)
+					if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth())) {
+						isCollision[0] = 1;
+					}
 
-				// Tests y's will intersect and are in the same x range (Above)
-				if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight()) {
-					isCollision[2] = 1;
-				}
+					// Tests x's will intersect and are in the same y range (Right)
+					if ((this.x + this.getWidth() + velX) >= tempObj.getX()) {
+						isCollision[1] = 1;
+					}
 
-				// Tests y's will intersect and are in the same x range (Below)
-				if ((this.y + this.getHeight() + velY) >= tempObj.getY()) {
-					isCollision[3] = 1;
+					// Tests y's will intersect and are in the same x range (Above)
+					if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight()) {
+						isCollision[2] = 1;
+					}
+
+					// Tests y's will intersect and are in the same x range (Below)
+					if ((this.y + this.getHeight() + velY) >= tempObj.getY()) {
+						isCollision[3] = 1;
+					}
 				}
 			}
 		}
 		return isCollision;
 	}
+	//DOESN'T WORK
+	//	private int[] testForNewCollisions(ArrayList<GameObject> objects){
+	//		// Reset array.
+	//		for (int i = 0; i < isCollision.length; i++) {
+	//			isCollision[i] = 0;
+	//		}
+	//		
+	//		// Test for collisions with each object
+	//		for (int i = 0; i < handler.getEntities().size(); i++) {
+	//
+	//			GameObject tempObj = handler.getEntities().get(i);
+	//
+	//			// Obviously there will be a collision with the player's self.
+	//			if (tempObj.id == ID.Player) {
+	//				continue;
+	//			}
+	//			if(tempObj.id == ID.Block){
+	//				 if(getBoundsLeft().intersects(handler.getEntities().get(i).getBounds())){
+	//					isCollision[0] = 1;
+	//				}
+	//				
+	//				 if(getBoundsRight().intersects(handler.getEntities().get(i).getBounds())){
+	//					isCollision[1] = 1;
+	//				}
+	//				
+	//				 if(getBoundsTop().intersects(handler.getEntities().get(i).getBounds())){
+	//					isCollision[2] = 1;
+	//				}
+	//				
+	//				 if(getBoundsBottom().intersects(handler.getEntities().get(i).getBounds())){
+	//					isCollision[3] = 1;
+	//				}
+	//			}
+	//		}
+	//		
+	//		return isCollision;
+	//	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 
 		if (keyCode == KeyEvent.VK_W) {
-			
+
 			if (jumping)
 				return;
 			else
@@ -371,6 +437,15 @@ public class Player extends GameObject implements KeyListener {
 
 	public Rectangle getBoundsTop() {
 		return new Rectangle(x, y, currentSprite.getWidth(), 1);
+	}
+	public Rectangle getBoundsBottom(){
+		return new Rectangle(x,y+currentSprite.getHeight(),currentSprite.getWidth(), 1);
+	}
+	public Rectangle getBoundsLeft(){
+		return new Rectangle(x,y,1,currentSprite.getHeight());
+	}
+	public Rectangle getBoundsRight(){
+		return new Rectangle(x+currentSprite.getWidth(), y, 1, currentSprite.getHeight());
 	}
 
 	public boolean isMoving() {
