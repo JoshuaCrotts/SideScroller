@@ -16,26 +16,22 @@ public class Game extends Canvas implements Runnable {
 	
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
-	public static final int SCROLLSPOT = 640;
+	public static final int SCROLLSPOT = WIDTH/2;
 
 	private Thread thread;
 	private boolean running = false;
-	public static boolean paused = false;
 
 	private BufferStrategy bs;
 
-	public int difficulity;
+	public static int difficulity;
 
 	// Objects
 	public static Player player;
-
-	// Etc objects
 	private Camera camera;
-
-	// Levels
-	private Level[] levels;
-
 	public static Handler handler;
+	
+	// Levels
+	public static Level[] levels;
 
 	private int frames;
 	private int currentFPS;
@@ -49,8 +45,9 @@ public class Game extends Canvas implements Runnable {
 		handler = new Handler(this);
 		this.camera = new Camera(0, 0);
 		new Window(WIDTH, HEIGHT, "Game", this);
-		this.levels = new Level[1];
 		player = new Player(90, 500, ID.Player, handler);
+		levels = new Level[1];
+		
 
 		this.addLevels();
 		this.loadImageLevel(levels[0].getImage());
@@ -209,7 +206,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void addLevels() {
-		this.levels[0] = new Level("img/backgrounds/level1.png", handler);
+		levels[0] = new Level("img/backgrounds/level1.png", handler);
 	}
 
 	public static void main(String[] args) {
