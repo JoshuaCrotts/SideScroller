@@ -40,17 +40,13 @@ public class Game extends Canvas implements Runnable {
 	private int frames;
 	private int currentFPS;
 
-	public enum STATE {
-		Menu, Help, Select, Shop, Game, End
-	};
-
 	public STATE gameState = STATE.Menu;
 
 	public Game() {
 
 		// Initializes the Handlers needed for essentially everything and the
 		// Menu for the menus.
-		handler = new Handler();
+		handler = new Handler(this);
 		this.camera = new Camera(0, 0);
 		new Window(WIDTH, HEIGHT, "Game", this);
 		this.levels = new Level[1];
