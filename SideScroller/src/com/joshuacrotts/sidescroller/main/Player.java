@@ -29,11 +29,7 @@ public class Player extends GameObject implements KeyListener {
 
 	private boolean jumping = false;
 	private boolean falling = false;
-	
-	// Recommend this be changed to private and not static. Doesn't make sense.
-	//-----------------------------------------
-	public static boolean attacking = false;
-	//-----------------------------------------
+	private boolean attacking = false;
 	
 	private boolean right, left;
 	private String lastDirection;
@@ -355,7 +351,6 @@ public class Player extends GameObject implements KeyListener {
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, currentSprite.getWidth(), currentSprite.getHeight());
-
 	}
 
 	public Rectangle getBoundsTop() {
