@@ -12,8 +12,8 @@ import com.joshuacrotts.sidescroller.main.GameObject;
 
 public abstract class Enemy extends GameObject{
 
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	
 	private int width;
 	private int height;
@@ -60,18 +60,18 @@ public abstract class Enemy extends GameObject{
 
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(x,y,width,height);
+		return new Rectangle((int)x,(int)y,width,height);
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	public void setX(double d) {
+		this.x = d;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 

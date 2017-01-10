@@ -46,7 +46,7 @@ public class Player extends GameObject implements KeyListener {
 	private Animator lAnimator;
 
 	// Physics
-	private int velyInit = 6;
+	private int velyInit = 16;
 	private double accel = .3;
 	private double time = 0;
 
@@ -56,6 +56,8 @@ public class Player extends GameObject implements KeyListener {
 
 	private Handler handler;
 	private Game game;
+	
+	private Graphics g;
 
 	public Player(int x, int y, ID id, Handler handler, Game game) {
 		super();
@@ -216,6 +218,53 @@ public class Player extends GameObject implements KeyListener {
 		}
 		return isCollision;
 	}
+	//DOESN'T WORK
+//		private int[] testForNewCollisions(ArrayList<GameObject> objects){
+//			// Reset array.
+//			
+//			Graphics2D g2 = (Graphics2D) g;
+//			
+//			for (int i = 0; i < isCollision.length; i++) {
+//				isCollision[i] = 0;
+//			}
+//			
+//			// Test for collisions with each object
+//			for (int i = 0; i < handler.getEntities().size(); i++) {
+//	
+//				GameObject tempObj = handler.getEntities().get(i);
+//	
+//				// Obviously there will be a collision with the player's self.
+//				if (tempObj.id == ID.Player) {
+//					continue;
+//				}
+//				
+//				
+//				
+//				if(tempObj.id == ID.Block){
+//					 if(getBoundsLeft().intersects(tempObj.getBoundsRight())){
+//						isCollision[0] = 1;
+//						System.out.println("A fucking collision");
+//						
+//					}
+//					
+//					 if(getBoundsRight().intersects(tempObj.getBoundsLeft())){
+//						isCollision[1] = 1;
+//						
+//					}
+//					
+//					 if(getBoundsTop().intersects(tempObj.getBoundsBottom())){
+//						isCollision[2] = 1;
+//					}
+//					
+//					 if(getBoundsBottom().intersects(tempObj.getBoundsTop())){
+//						
+//						isCollision[3] = 1;
+//					}
+//				}
+//			}
+//			
+//			return isCollision;
+//		}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -283,7 +332,7 @@ public class Player extends GameObject implements KeyListener {
 		}
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
@@ -291,7 +340,7 @@ public class Player extends GameObject implements KeyListener {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 

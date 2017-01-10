@@ -1,4 +1,4 @@
-package com.joshuacrotts.sidescroller.blocks;
+package com.joshuacrotts.sidescroller.items;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -49,9 +49,16 @@ public class Block extends GameObject{
 	public void render(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
-		g2.drawImage(this.sprite, x, y, null);
-		g2.setColor(Color.RED);
-		g2.draw(getBounds());
+		g2.drawImage(this.sprite, (int)x, (int)y, null);
+		//g2.draw(getBounds());
+		g2.setColor(Color.BLUE);
+		g2.draw(getBoundsTop());
+		g2.setColor(Color.green);
+		g2.draw(getBoundsBottom());
+		g2.setColor(Color.ORANGE);
+		g2.draw(getBoundsLeft());
+		g2.setColor(Color.yellow);
+		g2.draw(getBoundsRight());
 		
 	}
 
@@ -70,6 +77,19 @@ public class Block extends GameObject{
 	@Override
 	public Rectangle getBounds() {
 		// TODO Auto-generated method stub
-		return new Rectangle(x,y,getWidth(),getHeight());
+		return new Rectangle((int)x,(int)y,getWidth(),getHeight());
+	}
+	
+	public Rectangle getBoundsTop() {
+		return new Rectangle((int)x, (int)y, sprite.getWidth(), 1);
+	}
+	public Rectangle getBoundsBottom(){
+		return new Rectangle((int)x,(int)y+sprite.getHeight(),sprite.getWidth(), 1);
+	}
+	public Rectangle getBoundsLeft(){
+		return new Rectangle((int)x,(int)y,1,sprite.getHeight());
+	}
+	public Rectangle getBoundsRight(){
+		return new Rectangle((int)x+sprite.getWidth(), (int)y, 1, sprite.getHeight());
 	}
 }
