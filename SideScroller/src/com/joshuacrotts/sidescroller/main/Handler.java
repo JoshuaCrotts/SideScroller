@@ -7,11 +7,11 @@ public class Handler {
 
 	private ArrayList<GameObject> entities;
 
-	private Game game;
-
-	public Handler(Game game) {
-		this.game = game;
+	public static Game game;
+	
+	public Handler(Game _game) {
 		this.entities = new ArrayList<GameObject>();
+		game = _game;
 	}
 
 	public void tick() {

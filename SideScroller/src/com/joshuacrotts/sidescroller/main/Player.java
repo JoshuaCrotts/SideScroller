@@ -1,6 +1,5 @@
 package com.joshuacrotts.sidescroller.main;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,7 +18,7 @@ public class Player extends GameObject implements KeyListener {
 	// {left, right, above, below} relative to player
 	int[] isCollision = { 0, 0, 0, 0 };
 
-	public int x;
+	private int x;
 	private int y;
 
 	private double velX;
@@ -30,8 +29,12 @@ public class Player extends GameObject implements KeyListener {
 
 	private boolean jumping = false;
 	private boolean falling = false;
+	
 	// Recommend this be changed to private and not static. Doesn't make sense.
+	//-----------------------------------------
 	public static boolean attacking = false;
+	//-----------------------------------------
+	
 	private boolean right, left;
 	private String lastDirection;
 
@@ -52,14 +55,10 @@ public class Player extends GameObject implements KeyListener {
 
 	private int hVel = 5;
 
-	private double timer = -15.8;
-
 	private Handler handler;
-	private Game game;
-	
 	private Graphics g;
 
-	public Player(int x, int y, ID id, Handler handler, Game game) {
+	public Player(int x, int y, ID id, Handler handler) {
 		super();
 		super.setId(id);
 
@@ -74,7 +73,6 @@ public class Player extends GameObject implements KeyListener {
 		currentSprite = stillSprite;
 
 		this.handler = handler;
-		this.game = game;
 
 		handler.add(this);
 	}
@@ -99,7 +97,7 @@ public class Player extends GameObject implements KeyListener {
 
 		if (attacking) {
 			currentSprite = stillSprite;
-			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler, game, this);
+			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler);
 			attacking = false;
 		}
 
@@ -410,14 +408,6 @@ public class Player extends GameObject implements KeyListener {
 
 	public void setT(double t) {
 		this.time = t;
-	}
-
-	public double getTimer() {
-		return timer;
-	}
-
-	public void setTimer(double timer) {
-		this.timer = timer;
 	}
 
 	@Override

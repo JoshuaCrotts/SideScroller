@@ -7,13 +7,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 import com.joshuacrotts.sidescroller.blocks.Block;
-import com.joshuacrotts.sidescroller.enemies.BasicEnemy;
 
 public class Game extends Canvas implements Runnable {
 
+	private static final long serialVersionUID = -7466842187608872421L;
+	
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 	public static final int SCROLLSPOT = 640;
@@ -26,27 +26,19 @@ public class Game extends Canvas implements Runnable {
 
 	public int difficulity;
 
-	// private Handler handler;
-	private Window window;
-
 	// Objects
 	public static Player player;
 
 	// Etc objects
-	private Random randomInt = new Random();
 	private Camera camera;
 
 	// Levels
 	private Level[] levels;
 
-	private Handler handler;
+	public static Handler handler;
 
 	private int frames;
 	private int currentFPS;
-
-	public enum STATE {
-		Menu, Help, Select, Shop, Game, End
-	};
 
 	public STATE gameState = STATE.Menu;
 
@@ -56,9 +48,9 @@ public class Game extends Canvas implements Runnable {
 		// Menu for the menus.
 		handler = new Handler(this);
 		this.camera = new Camera(0, 0);
-		this.window = new Window(WIDTH, HEIGHT, "Game", this);
+		new Window(WIDTH, HEIGHT, "Game", this);
 		this.levels = new Level[1];
-		this.player = new Player(90, 500, ID.Player, handler, this);
+		player = new Player(90, 500, ID.Player, handler);
 
 		this.addLevels();
 		this.loadImageLevel(levels[0].getImage());
@@ -78,7 +70,6 @@ public class Game extends Canvas implements Runnable {
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		running = false;
@@ -132,14 +123,9 @@ public class Game extends Canvas implements Runnable {
 
 		levels[0].tick();
 		handler.tick();
+		camera.tick();
 
 		// System.out.println("py: "+player.getY());
-
-		for (int i = 0; i < handler.getEntities().size(); i++) {
-			if (handler.getEntities().get(i).getId() == ID.Player) {
-				camera.tick(handler.getEntities().get(i));
-			}
-		}
 
 	}
 
@@ -197,7 +183,7 @@ public class Game extends Canvas implements Runnable {
 				int b = (pixel) & 0xff;
 
 				if (r == 255 && g == 255 && b == 255) {
-					handler.add(new Block(x * 32, y * 32, "img/sprites/items/block1.png", handler, this, player));
+					handler.add(new Block(x * 32, y * 32, "img/sprites/items/block1.png", handler));
 				}
 				if (r == 0 && g == 0 && b == 0) {
 					Color c = Color.BLACK;
@@ -223,11 +209,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void addLevels() {
-		this.levels[0] = new Level("img/backgrounds/level1.png", this, handler);
-	}
-
-	private void addEnemies() {
-		this.levels[0].add(new BasicEnemy(300, 624, this, handler));
+		this.levels[0] = new Level("img/backgrounds/level1.png", handler);
 	}
 
 	public static void main(String[] args) {

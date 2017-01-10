@@ -15,9 +15,7 @@ public class Level {
 
 	private int x;
 	private int y;
-	
-	private Game game;
-	
+
 	private String fileLocation;
 	
 	private BufferedImage image;
@@ -26,14 +24,11 @@ public class Level {
 	
 	private ArrayList<Enemy> enemies;
 	
-	private boolean scrolling = false;
-	
 	public static int minView, maxView;
 	
-	public Level(String fileLocation, Game game, Handler handler){
+	public Level(String fileLocation, Handler handler){
 		this.x = 0;
 		this.y = 0;
-		this.game = game;
 		this.handler = handler;
 		this.enemies = new ArrayList<Enemy>();
 		
@@ -83,14 +78,6 @@ public class Level {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public Game getGame() {
-		return game;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
 	}
 
 	public String getFileLocation() {

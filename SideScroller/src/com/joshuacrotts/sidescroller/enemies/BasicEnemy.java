@@ -56,13 +56,16 @@ public class BasicEnemy extends Enemy {
 	private double accel = .3;
 	private int[] isCollision = {0,0,0,0};
 	
-
-	public BasicEnemy(int x, int y, Game game, Handler handler) {
+	public BasicEnemy(int x, int y, Handler handler) {
 		super(x, y);
 		this.lastDirection = "right";
 		this.handler = handler;
+<<<<<<< HEAD
 		this.game = game;
 		this.setId(ID.Enemy);
+=======
+
+>>>>>>> development
 		this.rSprites = new ArrayList<BufferedImage>();
 		this.lSprites = new ArrayList<BufferedImage>();
 		this.rAnimator = new Animator(rSprites, 30, this);
