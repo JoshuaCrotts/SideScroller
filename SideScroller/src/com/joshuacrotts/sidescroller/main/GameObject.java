@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
 		
-	protected int x;
-	protected int y;
+	protected double x;
+	protected double y;
 	
 	protected ID id;
 	
@@ -29,19 +29,19 @@ public abstract class GameObject {
 	
 	public abstract void render(Graphics g);
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
@@ -81,7 +81,20 @@ public abstract class GameObject {
 	
 	public abstract int getWidth();
 	public abstract int getHeight();
+	
 	public abstract Rectangle getBounds();
+	
+	public abstract Rectangle getBoundsLeft();
+	public abstract Rectangle getBoundsRight();
+	public abstract Rectangle getBoundsTop();
+	public abstract Rectangle getBoundsBottom();
+
+	public String getLastDirection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 	
 	
 }
