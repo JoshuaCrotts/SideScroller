@@ -20,8 +20,6 @@ public class Player extends GameObject implements KeyListener {
 
 	private int x;
 	private int y;
-
-	//please tell me this makes a fucking change
 	
 	private double velX;
 	private double velY;
@@ -31,8 +29,12 @@ public class Player extends GameObject implements KeyListener {
 
 	private boolean jumping = false;
 	private boolean falling = false;
+	
 	// Recommend this be changed to private and not static. Doesn't make sense.
+	//-----------------------------------------
 	public static boolean attacking = false;
+	//-----------------------------------------
+	
 	private boolean right, left;
 	private String lastDirection;
 
@@ -52,8 +54,6 @@ public class Player extends GameObject implements KeyListener {
 	private double time = 0;
 
 	private int hVel = 5;
-
-	private double timer = -15.8;
 
 	private Handler handler;
 
@@ -96,7 +96,7 @@ public class Player extends GameObject implements KeyListener {
 
 		if (attacking) {
 			currentSprite = stillSprite;
-			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler, this);
+			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler);
 			attacking = false;
 		}
 
@@ -350,14 +350,6 @@ public class Player extends GameObject implements KeyListener {
 
 	public void setT(double t) {
 		this.time = t;
-	}
-
-	public double getTimer() {
-		return timer;
-	}
-
-	public void setTimer(double timer) {
-		this.timer = timer;
 	}
 
 	@Override

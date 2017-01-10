@@ -14,20 +14,18 @@ public class Bullet extends GameObject{
 	private int height = 10;
 	
 	private Handler handler;
-	private Player player;
 	
 	private String dir;
 	
-	public Bullet(int x, int y, Handler handler, Player p){
+	public Bullet(int x, int y, Handler handler){
 		this.x = x;
 		this.y = y;
 		
 		this.handler = handler;
-		this.player = p;
 		
 		super.setId(ID.Bullet);
 		
-		this.dir = player.getLastDirection();
+		this.dir = Game.player.getLastDirection();
 		handler.add(this);
 		
 	}

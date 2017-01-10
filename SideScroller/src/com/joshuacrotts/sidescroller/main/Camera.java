@@ -1,6 +1,6 @@
 package com.joshuacrotts.sidescroller.main;
 
-public class Camera {
+public class Camera{
 
 	private float x, y;
 	
@@ -9,8 +9,8 @@ public class Camera {
 		this.y = y;
 	}
 
-	public void tick(GameObject player) {
-		x = - player.getX() + Game.WIDTH/2;
+	public void tick() {
+		x = - Game.player.getX() + Game.WIDTH/2;
 		
 	}
 	
@@ -29,8 +29,4 @@ public class Camera {
 	public void setY(float y) {
 		this.y = y;
 	}
-
-
-	
-	
 }

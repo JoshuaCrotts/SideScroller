@@ -35,7 +35,7 @@ public class Game extends Canvas implements Runnable {
 	// Levels
 	private Level[] levels;
 
-	private Handler handler;
+	public static Handler handler;
 
 	private int frames;
 	private int currentFPS;
@@ -123,14 +123,9 @@ public class Game extends Canvas implements Runnable {
 
 		levels[0].tick();
 		handler.tick();
+		camera.tick();
 
 		// System.out.println("py: "+player.getY());
-
-		for (int i = 0; i < handler.getEntities().size(); i++) {
-			if (handler.getEntities().get(i).getId() == ID.Player) {
-				camera.tick(handler.getEntities().get(i));
-			}
-		}
 
 	}
 
@@ -188,7 +183,7 @@ public class Game extends Canvas implements Runnable {
 				int b = (pixel) & 0xff;
 
 				if (r == 255 && g == 255 && b == 255) {
-					handler.add(new Block(x * 32, y * 32, "img/sprites/items/block1.png", handler, player));
+					handler.add(new Block(x * 32, y * 32, "img/sprites/items/block1.png", handler));
 				}
 				if (r == 0 && g == 0 && b == 0) {
 					Color c = Color.BLACK;
@@ -214,7 +209,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void addLevels() {
-		this.levels[0] = new Level("img/backgrounds/level1.png", this, handler);
+		this.levels[0] = new Level("img/backgrounds/level1.png", handler);
 	}
 
 	public static void main(String[] args) {

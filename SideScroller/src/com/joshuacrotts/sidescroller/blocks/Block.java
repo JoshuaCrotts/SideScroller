@@ -20,13 +20,10 @@ public class Block extends GameObject{
 	
 	private BufferedImage sprite;
 	private Handler handler;
-	private Player player;
 
-	
-	public Block(int x, int y, String fileLocation, Handler handler, Player p){
+	public Block(int x, int y, String fileLocation, Handler handler){
 		super(x,y,ID.Block);
 		this.handler = handler;
-		this.player = p;
 		
 		try{
 			sprite = ImageIO.read(new File(fileLocation));

@@ -39,13 +39,11 @@ public class BasicEnemy extends Enemy {
 	private String lastDirection;
 
 	private Handler handler;
-	private Game game;
 
-	public BasicEnemy(int x, int y, Game game, Handler handler) {
+	public BasicEnemy(int x, int y, Handler handler) {
 		super(x, y);
 		this.lastDirection = "right";
 		this.handler = handler;
-		this.game = game;
 
 		this.rSprites = new ArrayList<BufferedImage>();
 		this.lSprites = new ArrayList<BufferedImage>();
