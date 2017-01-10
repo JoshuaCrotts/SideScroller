@@ -15,11 +15,11 @@ public class Bullet extends GameObject{
 	
 	private Handler handler;
 	private Game game;
-	private Player player;
+	private GameObject player;
 	
 	private String dir;
 	
-	public Bullet(int x, int y, Handler handler, Game game, Player p){
+	public Bullet(int x, int y, Handler handler, Game game, GameObject p){
 		this.x = x;
 		this.y = y;
 		
@@ -78,5 +78,18 @@ public class Bullet extends GameObject{
 	public Rectangle getBounds() {
 		// TODO Auto-generated method stub
 		return new Rectangle(x,y,width,height);
+	}
+	
+	public Rectangle getBoundsTop() {
+		return new Rectangle(x, y, getWidth(), 1);
+	}
+	public Rectangle getBoundsBottom(){
+		return new Rectangle(x,y+getHeight(),getWidth(), 1);
+	}
+	public Rectangle getBoundsLeft(){
+		return new Rectangle(x,y,1,getHeight());
+	}
+	public Rectangle getBoundsRight(){
+		return new Rectangle(x+getWidth(), y, 1, getHeight());
 	}
 }
