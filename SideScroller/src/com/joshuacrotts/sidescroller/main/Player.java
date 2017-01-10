@@ -1,6 +1,5 @@
 package com.joshuacrotts.sidescroller.main;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,7 +18,7 @@ public class Player extends GameObject implements KeyListener {
 	// {left, right, above, below} relative to player
 	int[] isCollision = { 0, 0, 0, 0 };
 
-	public int x;
+	private int x;
 	private int y;
 
 	//please tell me this makes a fucking change
@@ -57,9 +56,8 @@ public class Player extends GameObject implements KeyListener {
 	private double timer = -15.8;
 
 	private Handler handler;
-	private Game game;
 
-	public Player(int x, int y, ID id, Handler handler, Game game) {
+	public Player(int x, int y, ID id, Handler handler) {
 		super();
 		super.setId(id);
 
@@ -74,7 +72,6 @@ public class Player extends GameObject implements KeyListener {
 		currentSprite = stillSprite;
 
 		this.handler = handler;
-		this.game = game;
 
 		handler.add(this);
 	}
@@ -99,7 +96,7 @@ public class Player extends GameObject implements KeyListener {
 
 		if (attacking) {
 			currentSprite = stillSprite;
-			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler, game, this);
+			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler, this);
 			attacking = false;
 		}
 
@@ -171,8 +168,6 @@ public class Player extends GameObject implements KeyListener {
 		for (int i = 0; i < isCollision.length; i++) {
 			isCollision[i] = 0;
 		}
-
-		boolean allFourSidesCollisions = false;
 		
 		// Test for collisions with each object
 		for (int i = 0; i < handler.getEntities().size(); i++) {

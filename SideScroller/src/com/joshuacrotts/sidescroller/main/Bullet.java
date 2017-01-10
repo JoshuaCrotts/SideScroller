@@ -14,17 +14,15 @@ public class Bullet extends GameObject{
 	private int height = 10;
 	
 	private Handler handler;
-	private Game game;
 	private Player player;
 	
 	private String dir;
 	
-	public Bullet(int x, int y, Handler handler, Game game, Player p){
+	public Bullet(int x, int y, Handler handler, Player p){
 		this.x = x;
 		this.y = y;
 		
 		this.handler = handler;
-		this.game = game;
 		this.player = p;
 		
 		super.setId(ID.Bullet);
@@ -64,19 +62,16 @@ public class Bullet extends GameObject{
 
 	@Override
 	public int getWidth() {
-		// TODO Auto-generated method stub
 		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
 		return height;
 	}
 
 	@Override
 	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
 		return new Rectangle(x,y,width,height);
 	}
 }

@@ -7,10 +7,7 @@ public class Handler {
 
 	private ArrayList<GameObject> entities;
 
-	private Game game;
-
-	public Handler(Game game) {
-		this.game = game;
+	public Handler() {
 		this.entities = new ArrayList<GameObject>();
 	}
 

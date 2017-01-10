@@ -26,8 +26,6 @@ public class Level {
 	
 	private ArrayList<Enemy> enemies;
 	
-	private boolean scrolling = false;
-	
 	public static int minView, maxView;
 	
 	public Level(String fileLocation, Game game, Handler handler){
