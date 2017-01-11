@@ -12,7 +12,10 @@ import javax.imageio.ImageIO;
 import com.joshuacrotts.sidescroller.enemies.Enemy;
 
 public class Level {
-
+	
+	public final int WIDTH;
+	public final int HEIGHT;
+	
 	private int x;
 	private int y;
 
@@ -24,13 +27,13 @@ public class Level {
 	
 	private ArrayList<Enemy> enemies;
 	
-	public static int minView, maxView;
-	
-	public Level(String fileLocation, Handler handler){
+	public Level(String fileLocation, Handler handler, int width, int height){
 		this.x = 0;
 		this.y = 0;
 		this.handler = handler;
 		this.enemies = new ArrayList<Enemy>();
+		this.WIDTH = width;
+		this.HEIGHT = height;
 		
 		this.fileLocation = fileLocation;
 		

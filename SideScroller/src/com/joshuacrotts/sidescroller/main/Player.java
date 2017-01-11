@@ -103,7 +103,6 @@ public class Player extends GameObject implements KeyListener {
 
 		else if (falling) {
 			time++;
-			System.out.println("THANK GOD");
 			velY = accel * time;
 		}
 

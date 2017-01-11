@@ -24,6 +24,7 @@ public class Game extends Canvas implements Runnable {
 	private BufferStrategy bs;
 
 	public static int difficulity;
+	public static int currentLevel = 0;
 
 	// Objects
 	public static Player player;
@@ -50,7 +51,7 @@ public class Game extends Canvas implements Runnable {
 		
 
 		this.addLevels();
-		this.loadImageLevel(levels[0].getImage());
+		this.loadImageLevel(levels[currentLevel].getImage());
 		// this.addEnemies();
 		this.addKeyListener(player);
 		this.start();
@@ -118,7 +119,7 @@ public class Game extends Canvas implements Runnable {
 		// System.out.println("Px :"+player.getX());
 		// System.out.println("levelx :"+levels[0].getX());
 
-		levels[0].tick();
+		levels[currentLevel].tick();
 		handler.tick();
 		camera.tick();
 
@@ -149,7 +150,7 @@ public class Game extends Canvas implements Runnable {
 
 		g2.translate(camera.getX(), camera.getY()); // begin of cam
 
-		levels[0].render(g);
+		levels[currentLevel].render(g);
 		handler.render(g);
 
 		g2.translate(-camera.getX(), -camera.getY()); // end of camera
@@ -206,7 +207,8 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void addLevels() {
-		levels[0] = new Level("img/backgrounds/level1.png", handler);
+		//new Level(File, handler, width, height)
+		levels[0] = new Level("img/backgrounds/level1.png", handler, 3468, 769);
 	}
 
 	public static void main(String[] args) {

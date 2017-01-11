@@ -10,7 +10,7 @@ public class Camera{
 	}
 
 	public void tick() {
-		if(Game.player.getX() <= Game.WIDTH/2)
+		if(Game.player.getX() <= Game.WIDTH/2 || Game.player.getX() >= Game.levels[Game.currentLevel].WIDTH - Game.WIDTH/2)
 			return;
 		else
 			x = - Game.player.getX() + Game.WIDTH/2;
