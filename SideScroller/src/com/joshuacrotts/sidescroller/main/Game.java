@@ -208,7 +208,7 @@ public class Game extends Canvas implements Runnable {
 
 	private void addLevels() {
 		//new Level(File, handler, width, height)
-		levels[0] = new Level("img/backgrounds/level1.png", handler, 3468, 769);
+		levels[0] = new Level("img/backgrounds/level1.png", handler, 3360, 704);
 	}
 
 	public static void main(String[] args) {
