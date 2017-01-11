@@ -1,35 +1,80 @@
 package com.joshuacrotts.sidescroller.main;
 
-public class Camera{
+public class Camera {
 
-	private float x, y;
-	
-	public Camera(float x, float y){
-		this.x = x;
-		this.y = y;
+	//Only for translation
+	private float translationX, translationY;
+	private int x, y;
+
+	// Things will not render unless within the view.
+	public final int RENDERPAD = 10;
+	private int renderMinX, renderMaxX;
+	private int renderMinY, renderMaxY;
+
+	public Camera(float x, float y) {
+		this.translationX = x;
+		this.translationY = y;
+		
+		this.x = 0;
+		this.y = 0;
 	}
 
 	public void tick() {
-		if(Game.player.getX() <= Game.WIDTH/2 || Game.player.getX() >= Game.levels[Game.currentLevel].WIDTH - Game.WIDTH/2)
+		Player p = Game.player;
+		
+		//Camer doesn't shift because player is back
+		if (p.getX() <= Game.WIDTH / 2)
+			this.x = 0;
+		
+		//Vamera doesn't shift because palyer is at the end
+		else if (p.getX() >= Game.levels[Game.currentLevelInt].WIDTH - Game.WIDTH / 2)
+			this.x = Game.levels[Game.currentLevelInt].WIDTH - Game.WIDTH;
+		
+		else
+			this.x = p.getX() - Game.WIDTH/2;
+		
+		renderMinX = (int) this.x - RENDERPAD;
+		renderMaxX = (int) this.x + Game.WIDTH + RENDERPAD;
+
+		renderMinY = (int) this.y - RENDERPAD;
+		renderMaxY = (int) this.y + Game.HEIGHT + RENDERPAD;
+
+		if (p.getX() <= Game.WIDTH / 2
+				|| p.getX() >= Game.levels[Game.currentLevelInt].WIDTH - Game.WIDTH / 2)
 			return;
 		else
-			x = - Game.player.getX() + Game.WIDTH/2;
-		
-	}
-	
-	public float getX() {
-		return x;
+			translationX = Game.WIDTH / 2 - Game.player.getX();
 	}
 
-	public void setX(float x) {
-		this.x = x;
+	public int getRenderMinX() {
+		return this.renderMinX;
 	}
 
-	public float getY() {
-		return y;
+	public int getRenderMaxX() {
+		return this.renderMaxX;
 	}
 
-	public void setY(float y) {
-		this.y = y;
+	public int getRenderMinY() {
+		return this.renderMinY;
+	}
+
+	public int getRenderMaxY() {
+		return this.renderMaxY;
+	}
+
+	public float getTranslationX() {
+		return translationX;
+	}
+
+	public void setTranslationX(float x) {
+		this.translationX = x;
+	}
+
+	public float getTranslationY() {
+		return translationY;
+	}
+
+	public void setTranslationY(float y) {
+		this.translationY = y;
 	}
 }

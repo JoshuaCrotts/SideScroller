@@ -24,11 +24,11 @@ public class Game extends Canvas implements Runnable {
 	private BufferStrategy bs;
 
 	public static int difficulity;
-	public static int currentLevel = 0;
+	public static int currentLevelInt = 0;
 
 	// Objects
 	public static Player player;
-	private Camera camera;
+	public static Camera camera;
 	public static Handler handler;
 	
 	// Levels
@@ -44,14 +44,14 @@ public class Game extends Canvas implements Runnable {
 		// Initializes the Handlers needed for essentially everything and the
 		// Menu for the menus.
 		handler = new Handler(this);
-		this.camera = new Camera(0, 0);
+		camera = new Camera(0, 0);
 		new Window(WIDTH, HEIGHT, "Game", this);
 		player = new Player(90, 500, ID.Player, handler);
 		levels = new Level[1];
 		
 
 		this.addLevels();
-		this.loadImageLevel(levels[currentLevel].getImage());
+		this.loadImageLevel(levels[currentLevelInt].getImage());
 		// this.addEnemies();
 		this.addKeyListener(player);
 		this.start();
@@ -119,7 +119,7 @@ public class Game extends Canvas implements Runnable {
 		// System.out.println("Px :"+player.getX());
 		// System.out.println("levelx :"+levels[0].getX());
 
-		levels[currentLevel].tick();
+		levels[currentLevelInt].tick();
 		handler.tick();
 		camera.tick();
 
@@ -148,12 +148,12 @@ public class Game extends Canvas implements Runnable {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), HEIGHT);
 
-		g2.translate(camera.getX(), camera.getY()); // begin of cam
+		g2.translate(camera.getTranslationX(), camera.getTranslationY()); // begin of cam
 
-		levels[currentLevel].render(g);
+		levels[currentLevelInt].render(g);
 		handler.render(g);
 
-		g2.translate(-camera.getX(), -camera.getY()); // end of camera
+		g2.translate(-camera.getTranslationX(), -camera.getTranslationY()); // end of camera
 
 		// FPS drawer
 		Font f = new Font("Arial", Font.BOLD, 14);

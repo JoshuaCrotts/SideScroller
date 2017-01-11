@@ -45,8 +45,8 @@ public class Player extends GameObject implements KeyListener {
 	private Animator lAnimator;
 
 	// Physics
-	private int velyInit = 6;
-	private double accel = .3;
+	private int velyInit = 10;
+	private double accel = .5;
 	private double time = 0;
 
 	private int hVel = 5;

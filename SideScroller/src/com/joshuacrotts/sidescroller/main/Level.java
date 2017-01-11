@@ -18,6 +18,8 @@ public class Level {
 	
 	private int x;
 	private int y;
+	
+
 
 	private String fileLocation;
 	
@@ -45,9 +47,8 @@ public class Level {
 	}
 	
 	public void tick(){
-		
-	}
 
+	}
 	
 	public void render(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;

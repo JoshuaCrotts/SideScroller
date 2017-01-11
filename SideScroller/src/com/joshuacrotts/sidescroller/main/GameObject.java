@@ -5,29 +5,41 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
-		
+
 	protected int x;
 	protected int y;
-	
+
 	protected ID id;
-	
+
 	protected double velX;
 	protected double velY;
 	public BufferedImage currentSprite;
-	
-	public GameObject(int x, int y, ID id){
+
+	public GameObject(int x, int y, ID id) {
 		this.x = x;
 		this.y = y;
 		this.id = id;
 	}
-	
-	public GameObject(){
-		
+
+	public GameObject() {
+
 	}
-	
+
 	public abstract void tick();
-	
+
 	public abstract void render(Graphics g);
+
+	public boolean withinRenderField() {
+		
+		// If within x-render field
+		if (Game.camera.getRenderMinX() < this.x && this.x < Game.camera.getRenderMaxX()) {
+			// If within y-render field
+			if (Game.camera.getRenderMinY() < this.y && this.y < Game.camera.getRenderMaxY()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public int getX() {
 		return x;
@@ -68,20 +80,21 @@ public abstract class GameObject {
 	public void setVelY(double f) {
 		this.velY = f;
 	}
-	
-	public void addVelY(float add){
+
+	public void addVelY(float add) {
 		if (Math.abs(this.getVelY() + add) <= 5)
 			this.setVelY(this.getVelY() + add);
 	}
-	
-	public void addVelX(float add){
+
+	public void addVelX(float add) {
 		if (Math.abs(this.getVelX() + add) <= 5)
 			this.setVelX(this.getVelX() + add);
 	}
-	
+
 	public abstract int getWidth();
+
 	public abstract int getHeight();
+
 	public abstract Rectangle getBounds();
-	
-	
+
 }
