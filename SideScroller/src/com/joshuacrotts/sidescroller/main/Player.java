@@ -28,7 +28,7 @@ public class Player extends GameObject implements KeyListener {
 	private boolean attacking = false;
 
 	private boolean right, left;
-	private String lastDirection;
+	private Direction lastDirection;
 
 	// Sprites
 	public static BufferedImage currentSprite;
@@ -59,7 +59,7 @@ public class Player extends GameObject implements KeyListener {
 		this.loadSprites();
 		this.rAnimator = new Animator(rSprites, 30, this);
 		this.lAnimator = new Animator(lSprites, 30, this);
-		this.lastDirection = "right";
+		this.lastDirection = Direction.Right;
 		stillSprite = rSprites.get(0);
 		currentSprite = stillSprite;
 
@@ -71,9 +71,9 @@ public class Player extends GameObject implements KeyListener {
 	public void tick() {
 
 		// Moving left and right sprite
-		if (lastDirection.equals("left")) {
+		if (lastDirection == Direction.Left) {
 			stillSprite = lSprites.get(0);
-		} else if (lastDirection.equals("right")) {
+		} else if (lastDirection == Direction.Right) {
 			stillSprite = rSprites.get(0);
 		}
 
@@ -81,11 +81,11 @@ public class Player extends GameObject implements KeyListener {
 		if (left) {
 			lAnimator.animate();
 			velX = -hVel;
-			lastDirection = "left";
+			lastDirection = Direction.Left;
 		} else if (right) {
 			rAnimator.animate();
 			velX = hVel;
-			lastDirection = "right";
+			lastDirection = Direction.Left;
 		}
 
 		// Airborne
@@ -382,8 +382,7 @@ public class Player extends GameObject implements KeyListener {
 		return right;
 	}
 
-	public String getLastDirection() {
+	public Direction getLastDirection() {
 		return lastDirection;
 	}
-
 }

@@ -15,7 +15,7 @@ public class Bullet extends GameObject{
 	
 	private Handler handler;
 	
-	private String dir;
+	private Direction dir;
 	
 	public Bullet(int x, int y, Handler handler){
 		this.x = x;
@@ -32,7 +32,7 @@ public class Bullet extends GameObject{
 	
 	public void tick(){
 		
-		if(dir.equals("left")){
+		if(dir == Direction.Left){
 			x-=35;
 		}else{
 			x += 35;
