@@ -28,7 +28,6 @@ public class Player extends GameObject implements KeyListener {
 	private String lastDirection;
 
 	// Sprites
-	public static BufferedImage currentSprite;
 	public static BufferedImage stillSprite; // Standing still
 
 	private ArrayList<BufferedImage> rSprites = new ArrayList<BufferedImage>();
@@ -49,8 +48,8 @@ public class Player extends GameObject implements KeyListener {
 		super(x,y, ID.Player);
 
 		this.loadSprites();
-		this.rAnimator = new Animator(rSprites, 30, this);
-		this.lAnimator = new Animator(lSprites, 30, this);
+		this.rAnimator = new Animator(rSprites, (byte)30, this);
+		this.lAnimator = new Animator(lSprites, (byte)30, this);
 		this.lastDirection = "right";
 		this.stillSprite = rSprites.get(0);
 		this.currentSprite = stillSprite;
@@ -75,29 +74,29 @@ public class Player extends GameObject implements KeyListener {
 		//This will determine if the player can run or not.
 		if (left) {
 			lAnimator.animate();
-			super.setVelX((short)(-this.hVel));
+			this.setVelX((short)(-this.hVel));
 			lastDirection = "left";
 		} else if (right) {
 			System.out.println("does this happen");
 			rAnimator.animate();
-			super.setVelX((short)(this.hVel));
+			this.setVelX((short)(this.hVel));
 			lastDirection = "right";
 		}
 
 		if (attacking) {
 			currentSprite = stillSprite;
-			new Bullet((short)(super.getX() + stillSprite.getWidth()), (short)(super.getY() + stillSprite.getHeight() / 2));
+			new Bullet((short)(this.getX() + stillSprite.getWidth()), (short)(this.getY() + stillSprite.getHeight() / 2));
 			attacking = false;
 		}
 
 		if (jumping) { // This probably needs to go in the counter.
 			time++;
-			super.setVelY((short) -(velyInit - (accel * time)));
+			this.setVelY((short) -(velyInit - (accel * time)));
 		}
 
 		else if (falling) {
 			time++;
-			setVelY((short) (accel * time));
+			this.setVelY((short) (accel * time));
 		}
 
 		//All of your collision stuff is the same.
@@ -105,13 +104,13 @@ public class Player extends GameObject implements KeyListener {
 
 		if (collisions[0] == 1 || collisions[1] == 1) { // Left or right
 			// collisions
-			super.setVelX((short) 0);
+			this.setVelX((short) 0);
 			canRun = false;
 		}
 
 		if (collisions[2] == 1 || collisions[3] == 1) { // Top or bottom
 			// collisions
-			super.setVelX((short) 0);
+			this.setVelX((short) 0);
 			time = 0;
 			if (collisions[2] == 1) {
 				falling = true;
@@ -136,8 +135,8 @@ public class Player extends GameObject implements KeyListener {
 			System.out.println("Index " + i + " is: " + collisions[i]);
 		}
 
-		super.setX((short) (this.getX() + super.getVelX()));
-		super.setY((short) (this.getY() + super.getVelY()));
+		this.setX((short) (this.getX() + this.getVelX()));
+		this.setY((short) (this.getY() + this.getVelY()));
 
 	}
 
@@ -145,11 +144,11 @@ public class Player extends GameObject implements KeyListener {
 		Graphics2D g2 = (Graphics2D) g;
 
 		if (!isMoving()) {
-			g2.drawImage(stillSprite, super.getX(), super.getY(), null);
+			g2.drawImage(stillSprite, this.getX(), this.getY(), null);
 		} else {
 			g2.setColor(Color.ORANGE);
-			g2.fillRect(super.getX(), super.getY(), 64, 64);
-			g2.drawImage(super.currentSprite, super.getX(), super.getY(), null);
+			g2.fillRect(this.getX(), this.getY(), 64, 64);
+			g2.drawImage(this.currentSprite, this.getX(), this.getY(), null);
 		}
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
@@ -176,24 +175,24 @@ public class Player extends GameObject implements KeyListener {
 			if (Game.handler.sameX_Range(this, tempObj) && Game.handler.sameY_Range(this, tempObj)) {
 
 				// Tests x's will intersect and are in the same y range (Left)
-				if ((super.getX() + super.getVelX()) <= (tempObj.getX() + tempObj.getWidth())) {
+				if ((this.getX() + this.getVelX()) <= (tempObj.getX() + tempObj.getWidth())) {
 					isCollision[0] = 1;
 				}
 
 				// Tests x's will intersect and are in the same y range (Right)
-				if ((super.getX() + this.getWidth() + super.getVelX()) >= tempObj.getX()) {
+				if ((this.getX() + this.getWidth() + this.getVelX()) >= tempObj.getX()) {
 					isCollision[1] = 1;
 				}
 
 				// Tests y's will intersect and are in the same x range (Above)
-				if ((super.getY() + super.getVelY()) <= tempObj.getY() + tempObj.getHeight()) {
+				if ((this.getY() + this.getVelY()) <= tempObj.getY() + tempObj.getHeight()) {
 					isCollision[2] = 1;
 				}
 
 				// Tests y's will intersect and are in the same x range (Below)
-				if ((super.getY() + super.getHeight() + super.getVelY()) >= tempObj.getY()) {
+				if ((this.getY() + this.getHeight() + this.getVelY()) >= tempObj.getY()) {
 					isCollision[3] = 1;
-					super.setY((short)(tempObj.getY() - super.getHeight()));
+					this.setY((short)(tempObj.getY() - this.getHeight()));
 					System.out.println("Does this???");
 				}
 			}
@@ -236,11 +235,11 @@ public class Player extends GameObject implements KeyListener {
 		if (keyCode == KeyEvent.VK_A) {
 			left = false;
 
-			super.setVelX((short) 0);
+			this.setVelX((short) 0);
 		}
 		if (keyCode == KeyEvent.VK_D) {
 			right = false;
-			super.setVelX((short) 0);
+			this.setVelX((short) 0);
 		}
 
 		if (keyCode == KeyEvent.VK_SPACE) {
@@ -306,7 +305,7 @@ public class Player extends GameObject implements KeyListener {
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(super.getX(), super.getY(), currentSprite.getWidth(), currentSprite.getHeight());
+		return new Rectangle(this.getX(), this.getY(), currentSprite.getWidth(), currentSprite.getHeight());
 	}
 
 	public boolean isMoving() {
