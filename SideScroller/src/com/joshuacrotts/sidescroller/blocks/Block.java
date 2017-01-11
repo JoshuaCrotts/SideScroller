@@ -44,6 +44,10 @@ public class Block extends GameObject{
 	public void render(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
+		if(this.x < (Game.player.getX() - Game.WIDTH/2) || 
+				this.x >(Game.player.getX() + Game.WIDTH/2))
+			return;
+		
 		g2.drawImage(this.sprite, x, y, null);
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
