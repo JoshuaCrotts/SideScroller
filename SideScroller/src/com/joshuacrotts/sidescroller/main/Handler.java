@@ -8,7 +8,10 @@ public class Handler {
 	private ArrayList<GameObject> entities;
 
 	public static Game game;
-	
+
+	// For collisison
+	public static int pad = 5;
+
 	public Handler(Game _game) {
 		this.entities = new ArrayList<GameObject>();
 		game = _game;
@@ -36,8 +39,8 @@ public class Handler {
 
 	public boolean sameX_Range(GameObject obj1, GameObject obj2) {
 
-		double lowerBound = obj1.getX() + obj1.getVelX();
-		double upperBound = lowerBound + obj1.getWidth();
+		double lowerBound = obj1.getX() + obj1.getVelX() - pad;
+		double upperBound = lowerBound + obj1.getWidth() + pad;
 
 		if (lowerBound <= obj2.getX() && obj2.getX() <= upperBound) {
 			return true;
@@ -54,8 +57,8 @@ public class Handler {
 
 	public boolean sameY_Range(GameObject obj1, GameObject obj2) {
 
-		double lowerBound = obj1.getY() + obj1.getVelY();
-		double upperBound = lowerBound + obj1.getHeight();
+		double lowerBound = obj1.getY() + obj1.getVelY() - pad;
+		double upperBound = lowerBound + obj1.getHeight() + pad;
 
 		// 3 scenarios where they would have the same y range
 		if (lowerBound <= obj2.getY() && obj2.getY() <= upperBound) {

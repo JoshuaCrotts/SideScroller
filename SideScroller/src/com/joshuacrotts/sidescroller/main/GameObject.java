@@ -8,11 +8,13 @@ public abstract class GameObject {
 
 	protected int x;
 	protected int y;
-
+	
+	protected int velX;
+	protected int velY;
+	
 	protected ID id;
 
-	protected double velX;
-	protected double velY;
+	
 	public BufferedImage currentSprite;
 
 	public GameObject(int x, int y, ID id) {
@@ -65,30 +67,33 @@ public abstract class GameObject {
 		this.id = id;
 	}
 
-	public double getVelX() {
+	public int getVelX() {
 		return velX;
 	}
 
-	public void setVelX(double velX) {
+	public void setVelX(int velX) {
 		this.velX = velX;
 	}
 
-	public double getVelY() {
+	public int getVelY() {
 		return velY;
 	}
 
-	public void setVelY(double f) {
+	public void setVelY(int f) {
 		this.velY = f;
 	}
 
-	public void addVelY(float add) {
+	public void addVelY(int add) {
 		if (Math.abs(this.getVelY() + add) <= 5)
 			this.setVelY(this.getVelY() + add);
 	}
 
-	public void addVelX(float add) {
+	public void addVelX(int add) {
 		if (Math.abs(this.getVelX() + add) <= 5)
 			this.setVelX(this.getVelX() + add);
+		else{
+			this.setVelX(5);
+		}
 	}
 
 	public abstract int getWidth();

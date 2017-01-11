@@ -44,7 +44,7 @@ public class Block extends GameObject {
 			return;
 
 		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(this.sprite, x, y, null);
+		g2.drawImage(this.sprite, this.getX(), this.getY(), null);
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
 
@@ -62,6 +62,6 @@ public class Block extends GameObject {
 
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(x, y, getWidth(), getHeight());
+		return new Rectangle(this.getX(), this.getY(), getWidth(), getHeight());
 	}
 }

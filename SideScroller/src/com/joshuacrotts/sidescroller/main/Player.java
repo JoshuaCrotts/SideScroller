@@ -16,21 +16,17 @@ import javax.imageio.ImageIO;
 public class Player extends GameObject implements KeyListener {
 
 	// {left, right, above, below} relative to player
-	int[] isCollision = { 0, 0, 0, 0 };
+	int[] collisions = { 0, 0, 0, 0 };
 
-	private int x;
-	private int y;
-	
-	private double velX;
-	private double velY;
-
+	// Size of player
 	public static int width = 64;
 	public static int height = 64;
 
+	// Are certain actions being performed?
 	private boolean jumping = false;
 	private boolean falling = false;
 	private boolean attacking = false;
-	
+
 	private boolean right, left;
 	private String lastDirection;
 
@@ -49,7 +45,7 @@ public class Player extends GameObject implements KeyListener {
 	private double accel = .5;
 	private double time = 0;
 
-	private int hVel = 5;
+	private int hVel = 0;
 
 	private Handler handler;
 
@@ -74,12 +70,14 @@ public class Player extends GameObject implements KeyListener {
 
 	public void tick() {
 
+		// Moving left and right sprite
 		if (lastDirection.equals("left")) {
 			stillSprite = lSprites.get(0);
 		} else if (lastDirection.equals("right")) {
 			stillSprite = rSprites.get(0);
 		}
 
+		// Running
 		if (left) {
 			lAnimator.animate();
 			velX = -hVel;
@@ -90,58 +88,114 @@ public class Player extends GameObject implements KeyListener {
 			lastDirection = "right";
 		}
 
+		// Airborne
+		if (jumping) {
+			time++;
+			velY = (int) -(velyInit - (accel * time));
+		} else if (falling) {
+			time++;
+			velY = (int) (accel * time);
+		}
+
+		// Attacking
 		if (attacking) {
 			currentSprite = stillSprite;
 			new Bullet(x + stillSprite.getWidth(), y + stillSprite.getHeight() / 2, handler);
 			attacking = false;
 		}
 
-		if (jumping) { // This probably needs to go in the counter.
-			time++;
-			velY = -(velyInit - (accel * time));
+		handleCollisions();
+
+		this.x += velX;
+		this.y += velY;
+
+	}
+
+	private void handleCollisions() {
+
+		/**
+		 * At this point, velY and velX should be all set Now all we have to do
+		 * is make sure that they are safe to execute. If there will be a
+		 * collision, we must prevent it.
+		 * 
+		 * @author Brandon Willis
+		 */
+
+		resetCollisionsArray();
+
+		// Test for collisions with each object
+		for (int i = 0; i < handler.getEntities().size(); i++) {
+
+			GameObject tempObj = handler.getEntities().get(i);
+
+			// Obviously there will be a collision with the player's self.
+			if (tempObj.id == ID.Player) {
+				continue;
+			}
+
+			// If there will be a collision
+			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)) {
+
+				// Tests x's will intersect and are in the same y range (Left)
+				if ((this.x + velX - Handler.pad) <= (tempObj.getX() + tempObj.getWidth() + Handler.pad)
+						&& handler.sameY_Range(this, tempObj)) {
+					System.out.println("\nLeft collisions\nThis: " + (this.x + velX - Handler.pad) + " is less than: "
+							+ (tempObj.getX() + tempObj.getWidth()));
+					collisions[0] = 1;
+				}
+
+				// Tests x's will intersect and are in the same y range (Right)
+				if ((this.x + this.getWidth() + velX + Handler.pad) >= tempObj.getX() - Handler.pad
+						&& handler.sameY_Range(this, tempObj)) {
+					collisions[1] = 1;
+				}
+
+				// Tests y's will intersect and are in the same x range (Above)
+				if ((this.y + velY - Handler.pad) <= tempObj.getY() + tempObj.getHeight() + Handler.pad
+						&& handler.sameX_Range(this, tempObj)) {
+					collisions[2] = 1;
+
+					System.out.println("\nAbove collision");
+					System.out.println("X: " + tempObj.getX() + " Y: " + tempObj.getY());
+				}
+
+				// Tests y's will intersect and are in the same x range (Below)
+				if ((this.y + this.getHeight() + velY + Handler.pad) >= tempObj.getY() - Handler.pad
+						&& handler.sameX_Range(this, tempObj)) {
+					collisions[3] = 1;
+				}
+			}
 		}
 
-		else if (falling) {
-			time++;
-			velY = accel * time;
-		}
+		// HANDLING COLLISIONS
+		// ---------------------
 
-		int[] collisions = testForCollisions(handler.getEntities());
-
-		if (collisions[0] == 1 || collisions[1] == 1) { // Left or right
-														// collisions
+		// Left or right collisions
+		if (collisions[0] == 1 || collisions[1] == 1) {
 			velX = 0;
+			currentSprite = stillSprite;
 		}
-		
-		if (collisions[2] == 1 || collisions[3] == 1) { // Top or bottom
-														// collisions
+
+		// Top or bottom collisions
+		if (collisions[2] == 1 || collisions[3] == 1) {
 			velY = 0;
 			time = 0;
 			if (collisions[2] == 1) {
 				falling = true;
 				jumping = false;
 			}
-			if (collisions[3] == 1){
+			if (collisions[3] == 1) {
 				jumping = false;
+				falling = false;
 			}
 		}
-		
-		//If nothing below, start falling
-		if (collisions[3] == 0 && jumping == false){
+
+		// If nothing below, start falling
+		if (collisions[3] == 0 && jumping == false) {
 			falling = true;
 		}
-		
-		//Print out collisions array
-		for (int i = 0; i < collisions.length; i++) {
-			if (i == 0) {
-				System.out.println();
-			}
-			System.out.println("Index " + i + " is: " + collisions[i]);
-		}
 
-		this.x += velX;
-		this.y += velY;
-
+		printCollisionsArray();
 	}
 
 	public void render(Graphics g) {
@@ -157,48 +211,20 @@ public class Player extends GameObject implements KeyListener {
 		g2.draw(getBoundsTop());
 	}
 
-	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
-
-		// Reset array.
-		for (int i = 0; i < isCollision.length; i++) {
-			isCollision[i] = 0;
+	private void resetCollisionsArray() {
+		for (int i = 0; i < collisions.length; i++) {
+			collisions[i] = 0;
 		}
-		
-		// Test for collisions with each object
-		for (int i = 0; i < handler.getEntities().size(); i++) {
+	}
 
-			GameObject tempObj = handler.getEntities().get(i);
-
-			// Obviously there will be a collision with the player's self.
-			if (tempObj.id == ID.Player) {
-				continue;
+	private void printCollisionsArray() {
+		// Print out collisions array
+		for (int i = 0; i < collisions.length; i++) {
+			if (i == 0) {
+				System.out.println("\nPlayer y-velocity: " + this.velY);
 			}
-
-			// If there will be a collision
-			if (handler.sameX_Range(this, tempObj) && handler.sameY_Range(this, tempObj)) {
-
-				// Tests x's will intersect and are in the same y range (Left)
-				if ((this.x + velX) <= (tempObj.getX() + tempObj.getWidth())) {
-					isCollision[0] = 1;
-				}
-
-				// Tests x's will intersect and are in the same y range (Right)
-				if ((this.x + this.getWidth() + velX) >= tempObj.getX()) {
-					isCollision[1] = 1;
-				}
-
-				// Tests y's will intersect and are in the same x range (Above)
-				if ((this.y + velY) <= tempObj.getY() + tempObj.getHeight()) {
-					isCollision[2] = 1;
-				}
-
-				// Tests y's will intersect and are in the same x range (Below)
-				if ((this.y + this.getHeight() + velY) >= tempObj.getY()) {
-					isCollision[3] = 1;
-				}
-			}
+			System.out.println("Index " + i + " is: " + collisions[i]);
 		}
-		return isCollision;
 	}
 
 	@Override
@@ -206,7 +232,7 @@ public class Player extends GameObject implements KeyListener {
 		int keyCode = e.getKeyCode();
 
 		if (keyCode == KeyEvent.VK_W) {
-			
+
 			if (jumping)
 				return;
 			else
@@ -281,22 +307,6 @@ public class Player extends GameObject implements KeyListener {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public double getVelX() {
-		return velX;
-	}
-
-	public void setVelX(double velX) {
-		this.velX = velX;
-	}
-
-	public double getVelY() {
-		return velY;
-	}
-
-	public void setVelY(double velY) {
-		this.velY = velY;
 	}
 
 	public int getWidth() {
