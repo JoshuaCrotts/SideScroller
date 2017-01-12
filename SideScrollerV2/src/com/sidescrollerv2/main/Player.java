@@ -128,7 +128,7 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		//Print out collisions array
-		for (int i = 0; i < collisions.length; i++) {
+		for (byte i = 0; i < collisions.length; i++) {
 			if (i == 0) {
 				System.out.println();
 			}
@@ -162,9 +162,9 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		// Test for collisions with each object
-		for (int i = 0; i < Game.handler.getEntities().size(); i++) {
+		for (int i = 0; i < Game.blockHandler.getBlocks().size(); i++) {
 
-			GameObject tempObj = Game.handler.getEntities().get(i);
+			GameObject tempObj = Game.blockHandler.getBlocks().get(i);
 
 			// Obviously there will be a collision with the player's self.
 			if (tempObj.getID() == ID.Player) {
