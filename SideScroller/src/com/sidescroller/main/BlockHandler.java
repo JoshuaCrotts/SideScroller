@@ -1,9 +1,9 @@
-package com.sidescrollerv2.main;
+package com.sidescroller.main;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import com.sidescrollerv2.blocks.Block;
+import com.sidescroller.blocks.Block;
 public class BlockHandler {
 
 	private ArrayList<Block> blocks;

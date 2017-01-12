@@ -1,4 +1,4 @@
-package com.sidescrollerv2.main;
+package com.sidescroller.main;
 
 public enum Direction {
 	Left,
