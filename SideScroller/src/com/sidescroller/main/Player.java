@@ -18,7 +18,7 @@ public class Player extends GameObject implements KeyListener {
 	private Direction playerFacing;
 
 	// Sprites
-	public static BufferedImage stillSprite; // Standing still
+	private BufferedImage stillSprite; // Standing still
 
 	private ArrayList<BufferedImage> rSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> lSprites = new ArrayList<BufferedImage>();
@@ -36,7 +36,6 @@ public class Player extends GameObject implements KeyListener {
 	private boolean rightKeyDown = false;
 	private boolean leftKeyDown = false;
 	private boolean upKeyDown = false;
-	private boolean downKeyDown = false;
 
 	// Player states
 	public boolean grounded = false;
@@ -44,8 +43,12 @@ public class Player extends GameObject implements KeyListener {
 	public boolean falling = true;
 	public boolean jumping = false;
 	public boolean movingHorizontal = false;
-	public boolean canJump = false;
 	public boolean blockBelow = false;
+
+	// Player permissions
+	public boolean canJump = false;
+	public boolean canMoveRight = true;
+	public boolean canMoveLeft = true;
 
 	// Physics (jumping and falling)
 	private int velyInit = -10;
@@ -75,13 +78,6 @@ public class Player extends GameObject implements KeyListener {
 
 	public void tick() {
 
-		// Player Direction
-		if (this.velX > 0) {
-			playerFacing = Direction.Right;
-		}
-		if (this.velX < 0) {
-			playerFacing = Direction.Left;
-		}
 		if (playerFacing == Direction.Left) {
 			stillSprite = lSprites.get(0);
 		} else if (playerFacing == Direction.Right) {
@@ -104,7 +100,7 @@ public class Player extends GameObject implements KeyListener {
 		} else if (grounded) {
 			// Turn off gravity and reset time.
 			jumping = false;
-			//acceleration = 0;
+			// acceleration = 0;
 			time = 0;
 
 			canJump = true;
@@ -113,19 +109,35 @@ public class Player extends GameObject implements KeyListener {
 
 		// Horizontal stuff
 		if (movingHorizontal) {
-			if (rightKeyDown) {
+			if (rightKeyDown && canMoveRight) {
 				velX += RUNNINGSPEED;
 			}
-			if (leftKeyDown) {
+			if (leftKeyDown && canMoveLeft) {
 				velX -= RUNNINGSPEED;
 			}
 		} else {
 			velX = 0;
 		}
+
+		// Player Direction
+		if (this.velX > 0) {
+			playerFacing = Direction.Right;
+			rAnimator.animate();
+		} else if (this.velX < 0) {
+			playerFacing = Direction.Left;
+			lAnimator.animate();
+		} else {
+			this.currentSprite = stillSprite;
+		}
+
 		setVelocities();
-		
-		//Will loop through every block between player ticks.
+
+		// Will loop through every block between player ticks.
 		this.blockBelow = false;
+		this.canMoveLeft = true;
+		this.canMoveRight = true;
+		
+		velX = 0;
 
 	}
 
@@ -155,8 +167,8 @@ public class Player extends GameObject implements KeyListener {
 			jumping = true;
 			canJump = false;
 		}
-		
-		if (!blockBelow && !jumping){
+
+		if (!blockBelow && !jumping) {
 			falling = true;
 		}
 
@@ -242,11 +254,9 @@ public class Player extends GameObject implements KeyListener {
 		int keyCode = e.getKeyCode();
 
 		switch (keyCode) {
+
 		case KeyEvent.VK_W:
 			upKeyDown = false;
-			break;
-		case KeyEvent.VK_S:
-			downKeyDown = false;
 			break;
 
 		// Left and right are special cases

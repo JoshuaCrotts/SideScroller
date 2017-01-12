@@ -18,7 +18,8 @@ import com.sidescroller.main.Player;
 public class Block extends GameObject {
 
 	public static boolean drawBounds;
-	
+
+	// For debugging
 	private boolean collision = false;
 
 	private Player p = Game.player;
@@ -31,30 +32,56 @@ public class Block extends GameObject {
 		} catch (IOException e) {
 			System.err.println("Error! Could not load in Block Image");
 		}
+		
+		this.setWidth((byte) 32);
+		this.setHeight((byte) 32);
 	}
 
 	@Override
 	public void tick() {
-		if (p.getY() + p.getHeight() + p.getVelY() >= this.y && Game.handler.sameX_Range(this, p) && Game.handler.sameY_Range(this, p)) {
-			collision = true;
-			
-			// Collision
-			p.grounded = true;
 
-			// Can't be falling or jumping = not airborne
+		collision = false;
+
+		// Collision on top of block
+		if (p.getY() + p.getHeight() + p.getVelY() + 1 >= this.y && Game.handler.sameX_Range(this, p)
+				&& Game.handler.sameY_Range(this, p, true)) {
+			collision = true;
+
+			// Set states
 			p.falling = false;
 			p.jumping = false;
 			p.airborne = false;
 			p.blockBelow = true;
+			p.grounded = true;
 
 			// Setup for next jump
 			p.canJump = true;
 			p.setTime(0);
-			p.standingVerticalValue = (short) (this.y - p.getHeight());
+			p.standingVerticalValue = (short) (this.y - p.getHeight() - 1);
 		}
-		else{
-			collision = false;
+
+		// Collision on Left side of block
+		if (p.getX() + p.getWidth() + p.getVelX() >= this.x && Game.handler.sameX_Range(this, p)
+				&& Game.handler.sameY_Range(this, p, false)) {
+
+			// When true, box is outlined
+			collision = true;
+
+			p.canMoveRight = false;
 		}
+
+		// Collision on Right side of block
+		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && Game.handler.sameX_Range(this, p)
+				&& Game.handler.sameY_Range(this, p, false)) {
+
+			// When true, box is outlined
+			collision = true;
+
+			p.canMoveLeft = false;
+		}
+
+		// Turns off collision debug
+		collision = false;
 	}
 
 	@Override
@@ -65,15 +92,14 @@ public class Block extends GameObject {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(super.currentSprite, super.getX(), super.getY(), null);
 		if (Game.borders) {
-			if (collision){
+			if (collision) {
 				g2.setStroke(new BasicStroke(5));
 				g2.setColor(Color.BLUE);
-			}
-			else{
+			} else {
 				g2.setStroke(new BasicStroke(3));
 				g2.setColor(Color.RED);
 			}
-			
+
 			g2.draw(getBounds());
 		}
 
