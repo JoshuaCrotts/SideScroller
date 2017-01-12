@@ -15,15 +15,8 @@ import com.sidescrollerv2.main.ID;
 
 public class Block extends GameObject {
 
-	private int xx;
-	private int yy;
-	private int ww = 64;
-	private int hh = 64;
-	
 	public Block(short x, short y, String fileLocation) {
 		super(x, y, ID.Block);
-		this.xx = x;
-		this.yy = y;
 
 		try {
 			super.currentSprite = ImageIO.read(new File(fileLocation));
@@ -46,13 +39,13 @@ public class Block extends GameObject {
 			return;
 
 		Graphics2D g2 = (Graphics2D) g;
-		//g2.drawImage(super.currentSprite, super.getX(), super.getY(), null);
+		g2.drawImage(super.currentSprite, super.getX(), super.getY(), null);
 		g2.setColor(Color.RED);
 		g2.draw(getBounds());
 
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(xx,yy,ww,hh);
+		return new Rectangle(super.getX(),super.getY(),32,32);
 	}
 }
