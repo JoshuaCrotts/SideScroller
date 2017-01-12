@@ -15,17 +15,7 @@ import javax.imageio.ImageIO;
 
 public class Player extends GameObject implements KeyListener {
 
-	// {left, right, above, below} relative to player
-	public static boolean[] isCollision = new boolean[4];
-
-	private boolean jumping = false;
-	private boolean falling = false;
-	private boolean attacking = false;
-
-	private boolean right, left;
-	private boolean canRun = true;
-
-	private String lastDirection;
+	private Direction playerFacing;
 
 	// Sprites
 	public static BufferedImage stillSprite; // Standing still
@@ -37,20 +27,42 @@ public class Player extends GameObject implements KeyListener {
 	private Animator rAnimator;
 	private Animator lAnimator;
 
-	// Physics
-	private byte velyInit = 10;
-	private double accel = .5;
+	// Constants
+	private static final short MAX_VELY = 100;
+	private static final short MAX_VELX = 5;
+	private static final short RUNNINGSPEED = 100;
+
+	// Key codes
+	private boolean rightKeyDown = false;
+	private boolean leftKeyDown = false;
+	private boolean upKeyDown = false;
+	private boolean downKeyDown = false;
+
+	// Player states
+	public boolean grounded = false;
+	public boolean airborne = true;
+	public boolean falling = true;
+	public boolean jumping = false;
+	public boolean movingHorizontal = false;
+	public boolean canJump = false;
+
+	// Physics (jumping and falling)
+	private int velyInit = -10;
+	private double acclerationOfGravity = .5;
+	private double acceleration = 0;
 	private double time = 0;
 
-	private byte hVel = 5;
+	// While the player is running, player maintains y = standingVer...
+	public short standingVerticalValue;
 
 	public Player(short x, short y) {
-		super(x,y, ID.Player);
+		super(x, y, ID.Player);
 
 		this.loadSprites();
-		this.rAnimator = new Animator(rSprites, (byte)30, this);
-		this.lAnimator = new Animator(lSprites, (byte)30, this);
-		this.lastDirection = "right";
+		this.rAnimator = new Animator(rSprites, (byte) 30, this);
+		this.lAnimator = new Animator(lSprites, (byte) 30, this);
+
+		this.playerFacing = Direction.Right;
 		this.stillSprite = rSprites.get(0);
 		this.currentSprite = stillSprite;
 
@@ -62,79 +74,94 @@ public class Player extends GameObject implements KeyListener {
 
 	public void tick() {
 
-		if (lastDirection.equals("left")) {
+		if (this.velX > 0) {
+			playerFacing = Direction.Right;
+		}
+		if (this.velX < 0) {
+			playerFacing = Direction.Left;
+		}
+
+		if (playerFacing == Direction.Left) {
 			stillSprite = lSprites.get(0);
-		} else if (lastDirection.equals("right")) {
+		} else if (playerFacing == Direction.Right) {
 			stillSprite = rSprites.get(0);
 		}
 
-		//This will determine if the player can run or not.
-		if (left) {
-			lAnimator.animate();
-			this.setVelX((short)(-this.hVel));
-			lastDirection = "left";
-		} else if (right) {
-			System.out.println("does this happen");
-			rAnimator.animate();
-			this.setVelX((short)(this.hVel));
-			lastDirection = "right";
-		}
+		configureStates();
 
-		if (attacking) {
-			currentSprite = stillSprite;
-			new Bullet((short)(this.getX() + stillSprite.getWidth()), (short)(this.getY() + stillSprite.getHeight() / 2));
-			attacking = false;
-		}
-
-		if (jumping) { // This probably needs to go in the counter.
+		if (airborne) {
+			this.canJump = false;
+			acceleration = acclerationOfGravity;
 			time++;
-			this.setVelY((short) -(velyInit - (accel * time)));
-		}
 
-		else if (falling) {
-			time++;
-			this.setVelY((short) (accel * time));
-		}
-
-		//All of your collision stuff is the same.
-		boolean[] collisions = testForCollisions(Game.handler.getEntities());
-
-		if (collisions[0] == true || collisions[1] == true) { // Left or right
-			// collisions
-			this.setVelX((short) 0);
-			canRun = false;
-		}
-
-		if (collisions[2] == true || collisions[3] == true) { // Top or bottom
-			// collisions
-			this.setVelX((short) 0);
+			if (falling) {
+				this.velY = (short) (acceleration * time);
+			} else if (jumping) {
+				velY = ((short) (velyInit + (acceleration * time)));
+			}
+		} else if (grounded) {
+			// Turn off gravity and reset time.
+			jumping = false;
+			acceleration = 0;
 			time = 0;
-			if (collisions[2] == true) {
-				falling = true;
-				jumping = false;
-			}
-			if (collisions[3] == true){
-				jumping = false;
 
-			}
+			canJump = true;
+			this.y = standingVerticalValue;
 		}
 
-		//If nothing below, start falling
-		if (collisions[3] == true && jumping == false){
-			falling = true;
-		}
-
-		//Print out collisions array
-		for (byte i = 0; i < collisions.length; i++) {
-			if (i == 0) {
-				System.out.println();
+		// Horizontal stuff
+		if (movingHorizontal) {
+			if (rightKeyDown) {
+				velX += RUNNINGSPEED;
 			}
-			System.out.println("Index " + i + " is: " + collisions[i]);
+			if (leftKeyDown) {
+				velX -= RUNNINGSPEED;
+			}
+		}else{
+			velX = 0;
+		}
+		setVelocities();
+
+	}
+
+	private void setVelocities() {
+
+		
+		// Limit Velocities
+		if (Math.abs(this.velX) >= MAX_VELX) {
+			this.velX = (short) (MAX_VELX * (this.velX / Math.abs(this.velX)));
+		}
+		if (Math.abs(this.velY) >= MAX_VELY) {
+			this.velY = MAX_VELY;
+		}
+		
+		this.x += this.velX;
+
+		// If on the ground, this value will be with the box it collided with
+		if (grounded) {
+			this.y = standingVerticalValue;
+		} else {
+			this.y += velY;
+		}
+	}
+
+	private void configureStates() {
+
+		if (canJump && upKeyDown) {
+			jumping = true;
+			canJump = false;
 		}
 
-		this.setX((short) (this.getX() + this.getVelX()));
-		this.setY((short) (this.getY() + this.getVelY()));
+		if (jumping || falling) {
+			airborne = true;
+			grounded = false;
+		}
 
+		if (this.leftKeyDown || this.rightKeyDown) {
+			this.movingHorizontal = true;
+		} else {
+			this.movingHorizontal = false;
+		}
 	}
 
 	public void render(Graphics g) {
@@ -146,101 +173,59 @@ public class Player extends GameObject implements KeyListener {
 			g2.drawImage(this.currentSprite, this.getX(), this.getY(), null);
 		}
 
-		if(Game.borders){
+		if (Game.borders) {
 			g2.setColor(Color.RED);
 			g2.draw(getBounds());
 		}
 	}
 
-	private boolean[] testForCollisions(ArrayList<GameObject> arrayList) {
-
-		// Reset array.
-		for (int i = 0; i < isCollision.length; i++) {
-			isCollision[i] = false;
+	private boolean isMoving() {
+		if (velX == 0 && velY == 0) {
+			return false;
 		}
-
-		// Test for collisions with each object
-		for (int i = 0; i < Game.blockHandler.getBlocks().size(); i++) {
-
-			GameObject tempObj = Game.blockHandler.getBlocks().get(i);
-
-			// Obviously there will be a collision with the player's self.
-			if (tempObj.getID() == ID.Player) {
-				continue;
-			}
-
-			// If there will be a collision
-			if (Game.handler.sameX_Range(this, tempObj) && Game.handler.sameY_Range(this, tempObj)) {
-
-				// Tests x's will intersect and are in the same y range (Left)
-				if ((this.getX() + this.getVelX()) <= (tempObj.getX() + tempObj.getWidth())) {
-					isCollision[0] = true;
-				}
-
-				// Tests x's will intersect and are in the same y range (Right)
-				if ((this.getX() + this.getWidth() + this.getVelX()) >= tempObj.getX()) {
-					isCollision[1] = true;
-				}
-
-				// Tests y's will intersect and are in the same x range (Above)
-				if ((this.getY() + this.getVelY()) <= tempObj.getY() + tempObj.getHeight()) {
-					isCollision[2] = true;
-				}
-
-				// Tests y's will intersect and are in the same x range (Below)
-				if ((this.getY() + this.getHeight() + this.getVelY()) >= tempObj.getY()) {
-					isCollision[3] = true;
-					this.setY((short)(tempObj.getY() - this.getHeight()));
-					System.out.println("Does this???");
-				}
-			}
-		}
-		return isCollision;
+		return true;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 
-		if (keyCode == KeyEvent.VK_W) {
-
-			if (jumping)
-				return;
-			else
-				jumping = true;
-		}
-
-		if (keyCode == KeyEvent.VK_A) {
-			left = true;
-		}
-
-		if (keyCode == KeyEvent.VK_D) {
-			right = true;
-		}
-
-		if (keyCode == KeyEvent.VK_SPACE) {
-			if (attacking)
-				return;
-			attacking = true;
+		switch (keyCode) {
+		case KeyEvent.VK_W:
+			upKeyDown = true;
+			break;
+		case KeyEvent.VK_A:
+			leftKeyDown = true;
+			break;
+		case KeyEvent.VK_D:
+			rightKeyDown = true;
+			break;
 		}
 
 		if (keyCode == KeyEvent.VK_X) {
-			if(!Game.debug){
+			if (!Game.debug) {
 				Game.debug = true;
-				return;}
-			else{
+				return;
+			} else {
 				Game.debug = false;
-				return;}
+				return;
+			}
 		}
 
 		if (keyCode == KeyEvent.VK_Z) {
-			if(!Game.borders){
+			if (!Game.borders) {
 				Game.borders = true;
-				return;}
-			else{
+				return;
+			} else {
 				Game.borders = false;
-				return;}
+				return;
+			}
 		}
+
+		/*
+		 * Keeping out until physics is perfect if (keyCode ==
+		 * KeyEvent.VK_SPACE) { if (attacking) return; attacking = true; }
+		 */
 
 	}
 
@@ -248,18 +233,23 @@ public class Player extends GameObject implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 
-		if (keyCode == KeyEvent.VK_A) {
-			left = false;
+		switch (keyCode) {
+		case KeyEvent.VK_W:
+			upKeyDown = false;
+			break;
+		case KeyEvent.VK_S:
+			downKeyDown = false;
+			break;
 
-			this.setVelX((short) 0);
-		}
-		if (keyCode == KeyEvent.VK_D) {
-			right = false;
-			this.setVelX((short) 0);
-		}
-
-		if (keyCode == KeyEvent.VK_SPACE) {
-			attacking = false;
+		// Left and right are special cases
+		case KeyEvent.VK_A:
+			leftKeyDown = false;
+			velX += RUNNINGSPEED;
+			break;
+		case KeyEvent.VK_D:
+			rightKeyDown = false;
+			velX -= RUNNINGSPEED;
+			break;
 		}
 
 	}
@@ -304,14 +294,6 @@ public class Player extends GameObject implements KeyListener {
 		this.velyInit = velyInit;
 	}
 
-	public double getAccel() {
-		return accel;
-	}
-
-	public void setAccel(int accel) {
-		this.accel = accel;
-	}
-
 	public double getTime() {
 		return time;
 	}
@@ -323,25 +305,12 @@ public class Player extends GameObject implements KeyListener {
 	public Rectangle getBounds() {
 		return new Rectangle(this.getX(), this.getY(), currentSprite.getWidth(), currentSprite.getHeight());
 	}
-
-	public boolean isMoving() {
-		return left || right;
+	
+	public Direction getDirection(){
+		return playerFacing;
 	}
 
-	public boolean isAttacking() {
-		return attacking;
+	public void setTime(int i) {
+		this.time = i;
 	}
-
-	public boolean goingLeft() {
-		return left;
-	}
-
-	public boolean goingRight() {
-		return right;
-	}
-
-	public String getLastDirection() {
-		return lastDirection;
-	}
-
 }

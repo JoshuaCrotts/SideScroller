@@ -6,11 +6,11 @@ import java.awt.image.BufferedImage;
 public abstract class GameObject {
 
 	//Motion variables
-	private short x;
-	private short y;
+	protected short x;
+	protected short y;
 	
-	private short velX;
-	private short velY;
+	protected short velX;
+	protected short velY;
 	
 	private byte width;
 	private byte height;

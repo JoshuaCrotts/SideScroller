@@ -7,12 +7,12 @@ import java.awt.Rectangle;
 
 public class Bullet extends GameObject{
 	
-	private String dir;
+	private Direction dir;
 	
 	public Bullet(short x, short y){
 		super(x,y, ID.Bullet);
 		
-		this.dir = Game.player.getLastDirection();
+		this.dir = Game.player.getDirection();
 		
 		super.setWidth((byte) 10);
 		super.setHeight((byte) 10);
