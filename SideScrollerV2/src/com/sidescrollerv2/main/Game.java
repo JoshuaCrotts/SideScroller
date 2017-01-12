@@ -13,31 +13,37 @@ import com.sidescrollerv2.blocks.Block;
 public class Game extends Canvas implements Runnable{
 
 	private static final long serialVersionUID = 7451407222234826899L;
-	
+
 	//Variables relating to the Window 
 	public static final short WIDTH = 1280;
 	public static final short HEIGHT = 720;
 	private Window w;
-	
+
 	//BufferStrategy/Graphics related objects
-	
+
 	//Etc Objects
 	public static Player player;
 	public static Level[] levels;
 	public static Handler handler;
 	public static Camera camera;
 	public static BlockHandler blockHandler;
-	
+
 	//Level variables
 	public static byte currentLevelInt = 0;
-	
+
 	//Objects/variables relating to the thread
 	private Thread t;
+
+	//Debug tools
+	public static boolean debug = true;
+	public static boolean borders = true;
+	
 	private boolean running = false;
 	private short frames;
-	private short currentFPS;
 	private short updates;
-	
+	private short currentFPS;
+	private short currentUPS;
+
 	public Game(){
 		handler = new Handler(this);
 		blockHandler = new BlockHandler(this);
@@ -45,14 +51,14 @@ public class Game extends Canvas implements Runnable{
 		this.w = new Window(WIDTH,HEIGHT,"Side Scroller V.2",this);
 		player = new Player((short)90,(short)500);
 		levels = new Level[1];
-		
+
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
-		
+
 		this.start();
 	}
-	
+
 	public synchronized void start(){
 		if(running) return;
 		else{
@@ -61,7 +67,7 @@ public class Game extends Canvas implements Runnable{
 			this.running = true;
 		}
 	}
-	
+
 	public synchronized void stop(){
 		if(!running) return;
 		else{
@@ -73,79 +79,81 @@ public class Game extends Canvas implements Runnable{
 		}
 		running = false;
 	}
-	
-//	public void run(){
-//	      requestFocus();
-//	      
-//	      long lastTime = System.nanoTime();
-//	      final double ns = 1000000000.0 / 60.0;
-//	      double delta = 0;
-//	      long timer = System.currentTimeMillis();
-//	      this.frames = 0;
-//	      this.updates = 0;
-//	      
-//	      while (running) {
-//	         long now = System.nanoTime();
-//	         delta += (now - lastTime) / ns;
-//	         lastTime = now;
-//	         while (delta >= 1) {
-//	            tick();
-//	            delta--;
-//	            updates++;
-//	            render();
-//	            frames++;
-//	         }
-//	         if (System.currentTimeMillis() - timer > 1000) {
-//	            timer += 1000;
-//	            w.setTitle(" | " + updates + " ups, " + frames + " fps");
-//	            updates = 0;
-//	            frames = 0;
-//	         }
-//	      }
-//		stop();
-//	}
-	
-	public void run() {
+
+	public void run(){
 		requestFocus();
+
 		long lastTime = System.nanoTime();
-		double amountOfTicks = 60.0;
-		double ns = 1000000000 / amountOfTicks;
+		final double ns = 1000000000.0 / 60.0;
 		double delta = 0;
 		long timer = System.currentTimeMillis();
 		this.frames = 0;
+		this.updates = 0;
 
 		while (running) {
-
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
 			while (delta >= 1) {
 				tick();
 				delta--;
-			}
-			if (running)
+				updates++;
 				render();
-			this.frames++;
-
+				frames++;
+			}
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				// System.out.println("FPS: "+ this.frames);
-				currentFPS = this.frames;
-				this.frames = 0;
-				System.out.println(currentFPS);
+				w.setTitle(" | " + updates + " ups, " + frames + " fps");
+				currentFPS = frames;
+				currentUPS = updates;
+				updates = 0;
+				frames = 0;
 			}
 		}
 		stop();
 	}
 
-	
+	//	public void run() {
+	//		requestFocus();
+	//		long lastTime = System.nanoTime();
+	//		double amountOfTicks = 60.0;
+	//		double ns = 1000000000 / amountOfTicks;
+	//		double delta = 0;
+	//		long timer = System.currentTimeMillis();
+	//		this.frames = 0;
+	//
+	//		while (running) {
+	//
+	//			long now = System.nanoTime();
+	//			delta += (now - lastTime) / ns;
+	//			lastTime = now;
+	//			while (delta >= 1) {
+	//				tick();
+	//				delta--;
+	//			}
+	//			if (running)
+	//				render();
+	//			this.frames++;
+	//
+	//			if (System.currentTimeMillis() - timer > 1000) {
+	//				timer += 1000;
+	//				// System.out.println("FPS: "+ this.frames);
+	//				currentFPS = this.frames;
+	//				this.frames = 0;
+	//				System.out.println(currentFPS);
+	//			}
+	//		}
+	//		stop();
+	//	}
+
+
 	private void tick(){
 		levels[currentLevelInt].tick();
 		handler.tick();
 		camera.tick();
 		blockHandler.tick();
 	}
-	
+
 	private void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 
@@ -156,7 +164,7 @@ public class Game extends Canvas implements Runnable{
 
 		Graphics g = bs.getDrawGraphics();
 		Graphics2D g2 = (Graphics2D) g;
-		
+
 		// DRAW HERE
 
 		g.setColor(Color.WHITE);
@@ -167,24 +175,46 @@ public class Game extends Canvas implements Runnable{
 		levels[currentLevelInt].render(g);
 		handler.render(g);
 		blockHandler.render(g);
-		
+
 		g2.translate(-camera.getTranslationX(), -camera.getTranslationY()); // end of camera
 
 		// FPS drawer
-		
-		Font f = new Font("Arial", Font.BOLD, 14);
-		g.setFont(f);
-		g.setColor(Color.RED);
-		g.drawString("Side Scroller Indev", 10, 20);
-		g.drawString("FPS: " + currentFPS, 10, 40);
-		//g.drawString("UPS: " + currentUPS, 10, 60);
 
+		if(debug){
+			Font f = new Font("Arial", Font.BOLD, 14);
+			g2.setFont(f);
+			g2.setColor(Color.BLACK);
+			g2.drawString("Side Scroller Indev - DEBUG MODE", 40, 50);
+			g2.drawString("| FPS: " + currentFPS, 40, 70);
+			g2.drawString("| UPS: " + currentUPS, 40, 90);
+			
+			g2.setColor(Color.RED);
+			g2.drawString("| Player X: " + player.getX(), 120, 70);
+			g2.drawString("| Player Y: " + player.getX(), 120, 90);
+			g2.drawString("| Player Vel X: " + player.getVelX(), 120, 110);
+			g2.drawString("| Player Vel Y: " + player.getVelY(), 120, 130);
+			
+			g2.setColor(Color.BLUE);
+			g2.drawString("| Collision Borders Enabled: "+Block.drawBounds,250, 70);
+			g2.drawString("| Left Collision: "+Player.isCollision[0],250, 90);
+			g2.drawString("| Right Collision: "+Player.isCollision[1],250, 110);
+			g2.drawString("| Top Collision: "+Player.isCollision[2],250, 130);
+			g2.drawString("| Bottom Collision: "+Player.isCollision[3],250, 150);
+			
+			g2.setColor(Color.BLACK);
+			g2.drawString("| Player Last Direction: "+player.getLastDirection(), 500,70);
+			g2.drawString("| # of Block Entities: "+blockHandler.getBlocks().size(), 500,90);
+			g2.drawString("| # of GameObject Entities: "+handler.getEntities().size(), 500,110);
+			g2.drawString("| Z to enable borders", 500, 130);
+			g2.drawString("| X to toggle debug", 500, 150);
+			
+		}
 		// END DRAWING
 
 		g.dispose();
 		bs.show();
 	}
-	
+
 	private void loadImageLevel(BufferedImage image) {
 		int w = image.getWidth();
 		int h = image.getHeight();
@@ -200,22 +230,22 @@ public class Game extends Canvas implements Runnable{
 				if (r == 255 && g == 255 && b == 255) {
 					blockHandler.add(new Block((short) (x * 32), (short) (y * 32), "img/sprites/items/block1.png"));
 				}
-//				if (r == 0 && g == 0 && b == 0) {
-//					Color c = Color.BLACK;
-//					image.setRGB(x, y, c.getRGB());
-//				}
+				if (r == 0 && g == 0 && b == 0) {
+					Color c = Color.WHITE;
+					image.setRGB(x, y, c.getRGB());
+				}
 			}
 		}
 
 	}
-	
+
 	private void addLevels() {
 		//new Level(File, handler, width, height)
 		levels[0] = new Level("img/backgrounds/level2.png", (short)3360, (short)704);
 	}
-	
+
 	public static void main(String[] args){
 		new Game();
-		
+
 	}
 }
