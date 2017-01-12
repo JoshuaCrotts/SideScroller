@@ -216,21 +216,21 @@ public class Game extends Canvas implements Runnable {
 			g2.drawString("| # of GameObject Entities: " + handler.getEntities().size(), 500, 110);
 			g2.drawString("| Z to enable borders", 500, 130);
 			g2.drawString("| X to toggle debug", 500, 150);
-			
+
 			g2.setColor(Color.GREEN);
 			g2.drawString("| airborne: " + player.airborne, 900, 70);
 			g2.drawString("| falling: " + player.falling, 900, 90);
 			g2.drawString("| jumping: " + player.jumping, 900, 110);
 			g2.drawString("| movingHorizontal: " + player.movingHorizontal, 900, 130);
-			g2.drawString("| canJump: " + player.canJump, 900, 150);
-			g2.drawString("| grounded: " + player.grounded, 900, 170);
+			g2.drawString("| grounded: " + player.grounded, 900, 150);
+			g2.drawString("| canJump: " + player.canJump, 900, 170);
+			g2.drawString("| canMoveRight: " + player.canMoveRight, 900, 190);
+			g2.drawString("| canMoveLeft: " + player.canMoveLeft, 900, 210);
 			/*
-			 * public boolean grounded = false;
-	public boolean airborne = true;
-	public boolean falling = true;
-	public boolean jumping = false;
-	public boolean movingHorizontal = false;
-	public boolean canJump = false;
+			 * public boolean grounded = false; public boolean airborne = true;
+			 * public boolean falling = true; public boolean jumping = false;
+			 * public boolean movingHorizontal = false; public boolean canJump =
+			 * false;
 			 */
 
 		}
