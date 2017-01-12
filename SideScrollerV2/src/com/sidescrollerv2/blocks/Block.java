@@ -15,6 +15,8 @@ import com.sidescrollerv2.main.ID;
 
 public class Block extends GameObject {
 
+	public static boolean drawBounds;
+	
 	public Block(short x, short y, String fileLocation) {
 		super(x, y, ID.Block);
 
@@ -23,9 +25,6 @@ public class Block extends GameObject {
 		} catch (IOException e) {
 			System.err.println("Error! Could not load in Block Image");
 		}
-
-		Game.handler.add(this);
-
 	}
 
 	@Override
@@ -40,8 +39,10 @@ public class Block extends GameObject {
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(super.currentSprite, super.getX(), super.getY(), null);
-		g2.setColor(Color.RED);
-		g2.draw(getBounds());
+		if(Game.borders){
+			g2.setColor(Color.RED);
+			g2.draw(getBounds());
+		}
 
 	}
 
