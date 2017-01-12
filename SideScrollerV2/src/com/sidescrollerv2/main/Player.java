@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 public class Player extends GameObject implements KeyListener {
 
 	// {left, right, above, below} relative to player
-	int[] isCollision = { 0, 0, 0, 0 };
+	public static boolean[] isCollision = new boolean[4];
 
 	private boolean jumping = false;
 	private boolean falling = false;
@@ -62,9 +62,6 @@ public class Player extends GameObject implements KeyListener {
 
 	public void tick() {
 
-		System.out.println(super.getVelX());
-		System.out.println(super.getVelY());
-
 		if (lastDirection.equals("left")) {
 			stillSprite = lSprites.get(0);
 		} else if (lastDirection.equals("right")) {
@@ -100,35 +97,35 @@ public class Player extends GameObject implements KeyListener {
 		}
 
 		//All of your collision stuff is the same.
-		int[] collisions = testForCollisions(Game.handler.getEntities());
+		boolean[] collisions = testForCollisions(Game.handler.getEntities());
 
-		if (collisions[0] == 1 || collisions[1] == 1) { // Left or right
+		if (collisions[0] == true || collisions[1] == true) { // Left or right
 			// collisions
 			this.setVelX((short) 0);
 			canRun = false;
 		}
 
-		if (collisions[2] == 1 || collisions[3] == 1) { // Top or bottom
+		if (collisions[2] == true || collisions[3] == true) { // Top or bottom
 			// collisions
 			this.setVelX((short) 0);
 			time = 0;
-			if (collisions[2] == 1) {
+			if (collisions[2] == true) {
 				falling = true;
 				jumping = false;
 			}
-			if (collisions[3] == 1){
+			if (collisions[3] == true){
 				jumping = false;
 
 			}
 		}
 
 		//If nothing below, start falling
-		if (collisions[3] == 0 && jumping == false){
+		if (collisions[3] == true && jumping == false){
 			falling = true;
 		}
 
 		//Print out collisions array
-		for (int i = 0; i < collisions.length; i++) {
+		for (byte i = 0; i < collisions.length; i++) {
 			if (i == 0) {
 				System.out.println();
 			}
@@ -146,25 +143,26 @@ public class Player extends GameObject implements KeyListener {
 		if (!isMoving()) {
 			g2.drawImage(stillSprite, this.getX(), this.getY(), null);
 		} else {
-			g2.setColor(Color.ORANGE);
-			g2.fillRect(this.getX(), this.getY(), 64, 64);
 			g2.drawImage(this.currentSprite, this.getX(), this.getY(), null);
 		}
-		g2.setColor(Color.RED);
-		g2.draw(getBounds());
+
+		if(Game.borders){
+			g2.setColor(Color.RED);
+			g2.draw(getBounds());
+		}
 	}
 
-	private int[] testForCollisions(ArrayList<GameObject> arrayList) {
+	private boolean[] testForCollisions(ArrayList<GameObject> arrayList) {
 
 		// Reset array.
 		for (int i = 0; i < isCollision.length; i++) {
-			isCollision[i] = 0;
+			isCollision[i] = false;
 		}
 
 		// Test for collisions with each object
-		for (int i = 0; i < Game.handler.getEntities().size(); i++) {
+		for (int i = 0; i < Game.blockHandler.getBlocks().size(); i++) {
 
-			GameObject tempObj = Game.handler.getEntities().get(i);
+			GameObject tempObj = Game.blockHandler.getBlocks().get(i);
 
 			// Obviously there will be a collision with the player's self.
 			if (tempObj.getID() == ID.Player) {
@@ -176,22 +174,22 @@ public class Player extends GameObject implements KeyListener {
 
 				// Tests x's will intersect and are in the same y range (Left)
 				if ((this.getX() + this.getVelX()) <= (tempObj.getX() + tempObj.getWidth())) {
-					isCollision[0] = 1;
+					isCollision[0] = true;
 				}
 
 				// Tests x's will intersect and are in the same y range (Right)
 				if ((this.getX() + this.getWidth() + this.getVelX()) >= tempObj.getX()) {
-					isCollision[1] = 1;
+					isCollision[1] = true;
 				}
 
 				// Tests y's will intersect and are in the same x range (Above)
 				if ((this.getY() + this.getVelY()) <= tempObj.getY() + tempObj.getHeight()) {
-					isCollision[2] = 1;
+					isCollision[2] = true;
 				}
 
 				// Tests y's will intersect and are in the same x range (Below)
 				if ((this.getY() + this.getHeight() + this.getVelY()) >= tempObj.getY()) {
-					isCollision[3] = 1;
+					isCollision[3] = true;
 					this.setY((short)(tempObj.getY() - this.getHeight()));
 					System.out.println("Does this???");
 				}
@@ -224,6 +222,24 @@ public class Player extends GameObject implements KeyListener {
 			if (attacking)
 				return;
 			attacking = true;
+		}
+
+		if (keyCode == KeyEvent.VK_X) {
+			if(!Game.debug){
+				Game.debug = true;
+				return;}
+			else{
+				Game.debug = false;
+				return;}
+		}
+
+		if (keyCode == KeyEvent.VK_Z) {
+			if(!Game.borders){
+				Game.borders = true;
+				return;}
+			else{
+				Game.borders = false;
+				return;}
 		}
 
 	}
