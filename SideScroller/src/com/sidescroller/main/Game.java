@@ -28,6 +28,11 @@ public class Game extends Canvas implements Runnable {
 	public static Camera camera;
 	public static BlockHandler blockHandler;
 
+	
+	//Memory variables
+	private Runtime instance;
+	private short kb = 1024;
+	
 	// Level variables
 	public static byte currentLevelInt = 0;
 
@@ -55,7 +60,7 @@ public class Game extends Canvas implements Runnable {
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
-
+		
 		this.start();
 	}
 
@@ -110,45 +115,19 @@ public class Game extends Canvas implements Runnable {
 				currentUPS = updates;
 				updates = 0;
 				frames = 0;
+				
+				 
+
 			}
 		}
 		stop();
 	}
 
-	// public void run() {
-	// requestFocus();
-	// long lastTime = System.nanoTime();
-	// double amountOfTicks = 60.0;
-	// double ns = 1000000000 / amountOfTicks;
-	// double delta = 0;
-	// long timer = System.currentTimeMillis();
-	// this.frames = 0;
-	//
-	// while (running) {
-	//
-	// long now = System.nanoTime();
-	// delta += (now - lastTime) / ns;
-	// lastTime = now;
-	// while (delta >= 1) {
-	// tick();
-	// delta--;
-	// }
-	// if (running)
-	// render();
-	// this.frames++;
-	//
-	// if (System.currentTimeMillis() - timer > 1000) {
-	// timer += 1000;
-	// // System.out.println("FPS: "+ this.frames);
-	// currentFPS = this.frames;
-	// this.frames = 0;
-	// System.out.println(currentFPS);
-	// }
-	// }
-	// stop();
-	// }
+
 
 	private void tick() {
+		if(debug)
+			instance = Runtime.getRuntime();
 		levels[currentLevelInt].tick();
 		handler.tick();
 		camera.tick();
@@ -226,6 +205,14 @@ public class Game extends Canvas implements Runnable {
 			g2.drawString("| canJump: " + player.canJump, 900, 170);
 			g2.drawString("| canMoveRight: " + player.canMoveRight, 900, 190);
 			g2.drawString("| canMoveLeft: " + player.canMoveLeft, 900, 210);
+			
+			g2.setColor(Color.ORANGE);
+			g2.drawString("Heap utilization statistics [KB]", 40, 180);
+			g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
+			g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
+			g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
+			g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);
+			 
 			/*
 			 * public boolean grounded = false; public boolean airborne = true;
 			 * public boolean falling = true; public boolean jumping = false;

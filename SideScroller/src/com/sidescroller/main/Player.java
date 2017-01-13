@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.sidescroller.main.Bullet;
+
 public class Player extends GameObject implements KeyListener {
 
 	private Direction playerFacing;
@@ -44,6 +46,7 @@ public class Player extends GameObject implements KeyListener {
 	public boolean jumping = false;
 	public boolean movingHorizontal = false;
 	public boolean blockBelow = false;
+	public boolean attacking = false;
 
 	// Player permissions
 	public boolean canJump = false;
@@ -105,6 +108,12 @@ public class Player extends GameObject implements KeyListener {
 
 			canJump = true;
 			this.y = standingVerticalValue;
+		}
+		
+		if(attacking){
+			this.currentSprite = stillSprite;
+			new Bullet((short)(this.getX() + stillSprite.getWidth()), (short)(this.getY() + stillSprite.getHeight() / 2));
+			attacking = false;
 		}
 
 		// Horizontal stuff
@@ -219,6 +228,9 @@ public class Player extends GameObject implements KeyListener {
 			break;
 		case KeyEvent.VK_D:
 			rightKeyDown = true;
+			break;
+		case KeyEvent.VK_SPACE:
+			attacking = true;
 			break;
 		}
 

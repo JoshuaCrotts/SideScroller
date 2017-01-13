@@ -4,15 +4,16 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import com.sidescroller.blocks.Block;
-public class BlockHandler {
 
-	private ArrayList<GameObject> blocks;
+public class BlockHandler {
+
+	private ArrayList<Block> blocks;
 
 	public static Game game;
 
 	public BlockHandler(Game game){
 		this.game = game;
-		this.blocks = new ArrayList<GameObject>();
+		this.blocks = new ArrayList<Block>();
 	}
 
 	public void tick(){
@@ -31,7 +32,7 @@ import com.sidescroller.blocks.Block;
 		this.blocks.add(b);
 	}
 	
-	public ArrayList<GameObject> getBlocks(){
+	public ArrayList<Block> getBlocks(){
 		return blocks;
 	}
 }

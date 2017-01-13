@@ -23,7 +23,7 @@ public class Bullet extends GameObject{
 	
 	public void tick(){
 		
-		if(dir.equals("left")){
+		if(dir == Direction.Left){
 			super.setX((short) (super.getX()-35));
 		}else{
 			super.setX((short) (super.getX()+35));
