@@ -7,5 +7,5 @@ public enum ID {
 	Player(),
 	Block(),
 	Enemy(),
-	Bullet();
+	Bullet(), NCBlock;
 }

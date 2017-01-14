@@ -7,8 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import com.sidescroller.blocks.Block;
+import com.sidescroller.blocks.NCBlock;
 
 public class Game extends Canvas implements Runnable {
 
@@ -28,7 +30,6 @@ public class Game extends Canvas implements Runnable {
 	public static Camera camera;
 	public static BlockHandler blockHandler;
 
-
 	//Memory variables
 	private Runtime instance;
 	private short kb = 1024;
@@ -38,17 +39,16 @@ public class Game extends Canvas implements Runnable {
 
 	// Objects/variables relating to the thread
 	private Thread t;
-
-	// Debug tools
-	public static boolean debug = true;
-	public static boolean borders = true;
-	public static boolean unlimitedFPS = true; //Debug Tool to allow for unlimited FPS
-
 	private boolean running = false;
 	private short frames;
 	private short updates;
 	private short currentFPS;
 	private short currentUPS;
+	
+	// Debug tools
+	public static boolean debug = true;
+	public static boolean borders = true;
+	public static boolean unlimitedFPS = false; //Debug Tool to allow for unlimited FPS
 
 	public Game() {
 		handler = new Handler(this);
@@ -160,6 +160,7 @@ public class Game extends Canvas implements Runnable {
 	private void tick() {
 		if(debug)
 			instance = Runtime.getRuntime();
+		
 		levels[currentLevelInt].tick();
 		handler.tick();
 		camera.tick();
@@ -198,7 +199,7 @@ public class Game extends Canvas implements Runnable {
 			Font f = new Font("Arial", Font.BOLD, 14);
 			g2.setFont(f);
 			g2.setColor(Color.BLACK);
-			g2.drawString("Side Scroller Indev - DEBUG MODE", 40, 50);
+			g2.drawString("Side Scroller Alpha - DEBUG MODE", 40, 50);
 			g2.drawString("| FPS: " + currentFPS, 40, 70);
 			g2.drawString("| UPS: " + currentUPS, 40, 90);
 
@@ -266,10 +267,15 @@ public class Game extends Canvas implements Runnable {
 		int w = image.getWidth();
 		int h = image.getHeight();
 
+		Random aesthetic = new Random();
+		int block = 0;
+		
 		for (int x = 0; x < w; x++) {
 			for (int y = 0; y < h; y++) {
 				int pixel = image.getRGB(x, y);
-
+				
+				block = aesthetic.nextInt(3);
+				
 				short r = (short) ((pixel >> 16) & 0xff);
 				short g = (short) ((pixel >> 8) & 0xff);
 				short b = (short) ((pixel) & 0xff);
@@ -282,11 +288,40 @@ public class Game extends Canvas implements Runnable {
 				if(r == 0 && g == 255 && b == 33){
 					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/grass.png"));
 				}
+				//Left Side Grass
+				if(r == 199 && g == 255 && b == 45){
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/lsidegrass1.png"));
+				}
+				//Right Side Grass
+				if(r == 160 && g == 255 && b == 207){
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/rsidegrass1.png"));
+				}
+				
+				//Left Corner Grass
+				if(r == 0 && g == 127 && b == 14){
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/clgrass1.png"));
+				}
+				//Right Corner Grass
+				if(r == 95 && g == 226 && b == 165){
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/crgrass1.png"));
+				}
 
-				//Little bits of extra colors of course
+				//Little bits of extra colors of course; adds stone blocks
 				if(r == 0 && g == 38 && b == 255){
 					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/stone1.png"));
 				}
+				
+				//Random chooser for the shrubs and flowers.
+				if(r == 255 && g == 255 && b == 0){
+					
+					System.out.println(block);
+					if(block == 0)
+						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "img/sprites/items/shrub1.png"));
+					if(block == 1)
+						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "img/sprites/items/shrub2.png"));
+					if(block == 2)
+						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "img/sprites/items/flower1.png"));
+					}
 
 				if (r == 0 && g == 0 && b == 0) {
 					Color c = Color.WHITE;
@@ -299,7 +334,7 @@ public class Game extends Canvas implements Runnable {
 
 	private void addLevels() {
 		// new Level(File, handler, width, height)//lvl2 3360 
-		levels[0] = new Level("img/backgrounds/level4.png", "img/backgrounds/l1.png", (short) 6240, (short) 704);
+		levels[0] = new Level("img/backgrounds/level6.png", "img/backgrounds/l1.png", (short) 6240, (short) 704);
 	}
 
 	public static void main(String[] args) {

@@ -130,6 +130,8 @@ public class Player extends GameObject implements KeyListener {
 			} else if (jumping) {
 				velY = ((short) (velyInit + (acceleration * time)));
 			}
+			
+			
 		} else if (grounded) {
 			// Turn off gravity and reset time.
 			jumping = false;
@@ -164,11 +166,14 @@ public class Player extends GameObject implements KeyListener {
 			playerFacing = Direction.Right;
 			if (!airborne)
 				rAnimator.animate();
+			
 		} else if (this.velX < 0) {
 			playerFacing = Direction.Left;
 			if (!airborne)
 				lAnimator.animate();
-		} else {
+		} 
+		
+		else {
 			this.currentSprite = stillSprite;
 		}
 
@@ -249,6 +254,7 @@ public class Player extends GameObject implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 
+		//Movement keys and attacking keys
 		switch (keyCode) {
 		case KeyEvent.VK_W:
 			upKeyDown = true;
@@ -264,6 +270,7 @@ public class Player extends GameObject implements KeyListener {
 			break;
 		}
 
+		//Draws the Debug screen
 		if (keyCode == KeyEvent.VK_X) {
 			if (!Game.debug) {
 				Game.debug = true;
@@ -274,6 +281,7 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 
+		//Draws the borders
 		if (keyCode == KeyEvent.VK_Z) {
 			if (!Game.borders) {
 				Game.borders = true;

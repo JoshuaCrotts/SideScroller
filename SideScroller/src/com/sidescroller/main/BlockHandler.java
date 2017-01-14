@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import com.sidescroller.blocks.Block;
+import com.sidescroller.blocks.NCBlock;
 
 public class BlockHandler {
 
@@ -29,6 +30,10 @@ public class BlockHandler {
 	}
 	
 	public void add(Block b){
+		this.blocks.add(b);
+	}
+	
+	public void add(NCBlock b){
 		this.blocks.add(b);
 	}
 	
