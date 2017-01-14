@@ -35,7 +35,7 @@ public class Handler {
 	}
 
 	public boolean sameX_Range(GameObject obj1, GameObject obj2) {
-		double lowerBound = obj1.getX() + obj1.getVelX();
+		double lowerBound = obj1.getX();
 		double upperBound = lowerBound + obj1.getWidth();
 
 		if (lowerBound <= obj2.getX() && obj2.getX() <= upperBound) {
@@ -53,7 +53,7 @@ public class Handler {
 
 	public boolean sameY_Range(GameObject obj1, GameObject obj2, boolean belowCollisionTest) {
 
-		double lowerBound = obj1.getY() + obj1.getVelY();
+		double lowerBound = obj1.getY();
 		double upperBound = lowerBound + obj1.getHeight();
 
 		if (belowCollisionTest) {

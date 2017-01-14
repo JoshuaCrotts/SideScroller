@@ -66,6 +66,10 @@ public class Player extends GameObject implements KeyListener {
 	// While the player is running, player maintains y = standingVer...
 	public short standingVerticalValue;
 
+	// When above collision, make it appear perfect
+	public short aboveCollisionYValue;
+	public boolean aboveCollision = false;
+
 	public Player(short x, short y) {
 		super(x, y, ID.Player);
 
@@ -93,16 +97,30 @@ public class Player extends GameObject implements KeyListener {
 			stillSprite = rSprites.get(0);
 		}
 
+		setVelocities();
+
+		velX = 0;
+		velY = 0;
+
+		/**
+		 * 
+		 * The reason I've decided to make the first thing I do is setting the
+		 * velocities is so that the velocities will only be added after it is
+		 * checked with every object that there will not be a collision
+		 * 
+		 * @author Brandon Willis
+		 */
+
 		// Begin Physics
 		configureStates();
 
 		if (airborne) {
-			//Determines which sprites to use when jumping
-			if(playerFacing == Direction.Right)
+			// Determines which sprites to use when jumping
+			if (playerFacing == Direction.Right)
 				uRAnimator.animate();
-			if(playerFacing == Direction.Left)
+			if (playerFacing == Direction.Left)
 				uLAnimator.animate();
-			
+
 			this.canJump = false;
 			acceleration = acclerationOfGravity;
 			time++;
@@ -121,10 +139,11 @@ public class Player extends GameObject implements KeyListener {
 			canJump = true;
 			this.y = standingVerticalValue;
 		}
-		
-		if(attacking){
+
+		if (attacking) {
 			this.currentSprite = stillSprite;
-			new Bullet((short)(this.getX() + stillSprite.getWidth()), (short)(this.getY() + stillSprite.getHeight() / 2));
+			new Bullet((short) (this.getX() + stillSprite.getWidth()),
+					(short) (this.getY() + stillSprite.getHeight() / 2));
 			attacking = false;
 		}
 
@@ -143,25 +162,20 @@ public class Player extends GameObject implements KeyListener {
 		// Player Direction
 		if (this.velX > 0) {
 			playerFacing = Direction.Right;
-			if(!airborne)
+			if (!airborne)
 				rAnimator.animate();
 		} else if (this.velX < 0) {
 			playerFacing = Direction.Left;
-			if(!airborne)
+			if (!airborne)
 				lAnimator.animate();
 		} else {
 			this.currentSprite = stillSprite;
 		}
 
-		setVelocities();
-
 		// Will loop through every block between player ticks.
 		this.blockBelow = false;
 		this.canMoveLeft = true;
 		this.canMoveRight = true;
-		
-		velX = 0;
-
 	}
 
 	private void setVelocities() {
@@ -179,6 +193,8 @@ public class Player extends GameObject implements KeyListener {
 		// If on the ground, this value will be with the box it collided with
 		if (grounded) {
 			this.y = standingVerticalValue;
+		} else if (aboveCollision) {
+			this.y = aboveCollisionYValue;
 		} else {
 			this.y += velY;
 		}
@@ -308,17 +324,17 @@ public class Player extends GameObject implements KeyListener {
 			try {
 				rSprites.add(ImageIO.read(new File("img/sprites/p/r/r" + i + ".png")));
 				lSprites.add(ImageIO.read(new File("img/sprites/p/l/l" + i + ".png")));
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		for(int i = 0; i<4; i++){
-			try{
-				uRSprites.add(ImageIO.read(new File("img/sprites/p/ur/u"+ i +".png")));
-				uLSprites.add(ImageIO.read(new File("img/sprites/p/ul/u"+ i +".png")));
-			}catch(IOException e){
+
+		for (int i = 0; i < 4; i++) {
+			try {
+				uRSprites.add(ImageIO.read(new File("img/sprites/p/ur/u" + i + ".png")));
+				uLSprites.add(ImageIO.read(new File("img/sprites/p/ul/u" + i + ".png")));
+			} catch (IOException e) {
 				System.err.println("Error! Could not load UP images");
 			}
 		}

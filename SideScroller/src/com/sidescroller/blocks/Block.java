@@ -32,7 +32,7 @@ public class Block extends GameObject {
 		} catch (IOException e) {
 			System.err.println("Error! Could not load in Block Image");
 		}
-		
+
 		this.setWidth((byte) 32);
 		this.setHeight((byte) 32);
 	}
@@ -43,9 +43,9 @@ public class Block extends GameObject {
 		collision = false;
 
 		// Collision on top of block
-		if (p.getY() + p.getHeight() + p.getVelY() + 1 >= this.y && Game.handler.sameX_Range(this, p)
-				&& Game.handler.sameY_Range(this, p, true)) {
-			collision = true;
+		if (p.getY() + p.getHeight() + p.getVelY() + 1 >= this.y && Game.handler.sameX_Range(p, this)
+				&& Game.handler.sameY_Range(p, this, true)) {
+			// collision = true;
 
 			// Set states
 			p.falling = false;
@@ -61,27 +61,43 @@ public class Block extends GameObject {
 		}
 
 		// Collision on Left side of block
-		if (p.getX() + p.getWidth() + p.getVelX() >= this.x && Game.handler.sameX_Range(this, p)
-				&& Game.handler.sameY_Range(this, p, false)) {
+		if (p.getX() + p.getWidth() + p.getVelX() + 1 >= this.x && Game.handler.sameX_Range(p, this)
+				&& Game.handler.sameY_Range(p, this, false)) {
 
 			// When true, box is outlined
-			collision = true;
+			// collision = true;
 
 			p.canMoveRight = false;
 		}
 
 		// Collision on Right side of block
-		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && Game.handler.sameX_Range(this, p)
-				&& Game.handler.sameY_Range(this, p, false)) {
+		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && Game.handler.sameX_Range(p, this)
+				&& Game.handler.sameY_Range(p, this, false)) {
 
 			// When true, box is outlined
-			collision = true;
+			// collision = true;
 
 			p.canMoveLeft = false;
 		}
 
+		// Collision on the bottom of the block
+		if (p.getY() + p.getVelY() - 1 <= this.y + this.getHeight() && Game.handler.sameX_Range(p, this)
+				&& Game.handler.sameY_Range(p, this, false)) {
+			if (p.getY() >= this.y) // Make sure player is below block
+			{
+				collision = true;
+
+				p.aboveCollisionYValue = (short) (this.y + this.getHeight() + 1);
+				p.aboveCollision = true;
+				p.setVelY((short) 0);
+				p.setFalling(true);
+				p.setTime((short) 0);
+			}
+
+		}
+
 		// Turns off collision debug
-		collision = false;
+		// collision = false;
 	}
 
 	@Override
