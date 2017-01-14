@@ -24,10 +24,14 @@ public class Player extends GameObject implements KeyListener {
 
 	private ArrayList<BufferedImage> rSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> lSprites = new ArrayList<BufferedImage>();
+	private ArrayList<BufferedImage> uRSprites = new ArrayList<BufferedImage>();
+	private ArrayList<BufferedImage> uLSprites = new ArrayList<BufferedImage>();
 
 	// Animators
 	private Animator rAnimator;
 	private Animator lAnimator;
+	private Animator uRAnimator;
+	private Animator uLAnimator;
 
 	// Constants
 	private static final short MAX_VELY = 100;
@@ -68,6 +72,8 @@ public class Player extends GameObject implements KeyListener {
 		this.loadSprites();
 		this.rAnimator = new Animator(rSprites, (byte) 30, this);
 		this.lAnimator = new Animator(lSprites, (byte) 30, this);
+		this.uRAnimator = new Animator(uRSprites, (byte) 30, this);
+		this.uLAnimator = new Animator(uLSprites, (byte) 30, this);
 
 		this.playerFacing = Direction.Right;
 		this.stillSprite = rSprites.get(0);
@@ -91,6 +97,12 @@ public class Player extends GameObject implements KeyListener {
 		configureStates();
 
 		if (airborne) {
+			//Determines which sprites to use when jumping
+			if(playerFacing == Direction.Right)
+				uRAnimator.animate();
+			if(playerFacing == Direction.Left)
+				uLAnimator.animate();
+			
 			this.canJump = false;
 			acceleration = acclerationOfGravity;
 			time++;
@@ -131,10 +143,12 @@ public class Player extends GameObject implements KeyListener {
 		// Player Direction
 		if (this.velX > 0) {
 			playerFacing = Direction.Right;
-			rAnimator.animate();
+			if(!airborne)
+				rAnimator.animate();
 		} else if (this.velX < 0) {
 			playerFacing = Direction.Left;
-			lAnimator.animate();
+			if(!airborne)
+				lAnimator.animate();
 		} else {
 			this.currentSprite = stillSprite;
 		}
@@ -294,8 +308,18 @@ public class Player extends GameObject implements KeyListener {
 			try {
 				rSprites.add(ImageIO.read(new File("img/sprites/p/r/r" + i + ".png")));
 				lSprites.add(ImageIO.read(new File("img/sprites/p/l/l" + i + ".png")));
+				
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+		}
+		
+		for(int i = 0; i<4; i++){
+			try{
+				uRSprites.add(ImageIO.read(new File("img/sprites/p/ur/u"+ i +".png")));
+				uLSprites.add(ImageIO.read(new File("img/sprites/p/ul/u"+ i +".png")));
+			}catch(IOException e){
+				System.err.println("Error! Could not load UP images");
 			}
 		}
 	}

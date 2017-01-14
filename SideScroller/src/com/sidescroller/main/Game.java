@@ -28,11 +28,11 @@ public class Game extends Canvas implements Runnable {
 	public static Camera camera;
 	public static BlockHandler blockHandler;
 
-	
+
 	//Memory variables
 	private Runtime instance;
 	private short kb = 1024;
-	
+
 	// Level variables
 	public static byte currentLevelInt = 0;
 
@@ -42,6 +42,7 @@ public class Game extends Canvas implements Runnable {
 	// Debug tools
 	public static boolean debug = true;
 	public static boolean borders = true;
+	public static boolean unlimitedFPS = true; //Debug Tool to allow for unlimited FPS
 
 	private boolean running = false;
 	private short frames;
@@ -60,7 +61,7 @@ public class Game extends Canvas implements Runnable {
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
-		
+
 		this.start();
 	}
 
@@ -88,42 +89,73 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void run() {
-		requestFocus();
+		if(!unlimitedFPS){
+			requestFocus();
 
-		long lastTime = System.nanoTime();
-		final double ns = 1000000000.0 / 60.0;
-		double delta = 0;
-		long timer = System.currentTimeMillis();
-		this.frames = 0;
-		this.updates = 0;
+			long lastTime = System.nanoTime();
+			final double ns = 1000000000.0 / 60.0;
+			double delta = 0;
+			long timer = System.currentTimeMillis();
+			this.frames = 0;
+			this.updates = 0;
 
-		while (running) {
-			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
-			lastTime = now;
-			while (delta >= 1) {
-				tick();
-				delta--;
-				updates++;
-				render();
-				frames++;
+			while (running) {
+				long now = System.nanoTime();
+				delta += (now - lastTime) / ns;
+				lastTime = now;
+				while (delta >= 1) {
+					tick();
+					delta--;
+					updates++;
+					render();
+					frames++;
+				}
+				if (System.currentTimeMillis() - timer > 1000) {
+					timer += 1000;
+					w.setTitle(" | " + updates + " ups, " + frames + " fps");
+					currentFPS = frames;
+					currentUPS = updates;
+					updates = 0;
+					frames = 0;
+				}
 			}
-			if (System.currentTimeMillis() - timer > 1000) {
-				timer += 1000;
-				w.setTitle(" | " + updates + " ups, " + frames + " fps");
-				currentFPS = frames;
-				currentUPS = updates;
-				updates = 0;
-				frames = 0;
-				
-				 
-
-			}
+			stop();
 		}
-		stop();
+		
+		if(unlimitedFPS){
+			requestFocus();
+			long lastTime = System.nanoTime();
+			double amountOfTicks = 60.0;
+			double ns = 1000000000 / amountOfTicks;
+			double delta = 0;
+			long timer = System.currentTimeMillis();
+			this.frames = 0;
+
+			while(running)
+			{
+				long now = System.nanoTime();
+				delta += (now - lastTime) / ns;
+				lastTime = now;
+				while(delta >=1)
+				{
+					tick();
+					delta--;
+				}
+				if(running)
+					render();
+				this.frames++;
+
+				if(System.currentTimeMillis() - timer > 1000)
+				{
+					timer += 1000;
+					//System.out.println("FPS: "+ this.frames);
+					currentFPS = this.frames;
+					this.frames = 0;
+				}
+			}
+			stop();
+		}
 	}
-
-
 
 	private void tick() {
 		if(debug)
@@ -205,14 +237,17 @@ public class Game extends Canvas implements Runnable {
 			g2.drawString("| canJump: " + player.canJump, 900, 170);
 			g2.drawString("| canMoveRight: " + player.canMoveRight, 900, 190);
 			g2.drawString("| canMoveLeft: " + player.canMoveLeft, 900, 210);
-			
+
 			g2.setColor(Color.ORANGE);
-			g2.drawString("Heap utilization statistics [KB]", 40, 180);
-			g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
-			g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
-			g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
-			g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);
-			 
+
+			if(!unlimitedFPS){
+				g2.drawString("Heap utilization statistics [KB]", 40, 180);
+				g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
+				g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
+				g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
+				g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);
+			}
+
 			/*
 			 * public boolean grounded = false; public boolean airborne = true;
 			 * public boolean falling = true; public boolean jumping = false;
@@ -240,8 +275,19 @@ public class Game extends Canvas implements Runnable {
 				short b = (short) ((pixel) & 0xff);
 
 				if (r == 255 && g == 255 && b == 255) {
-					blockHandler.add(new Block((short) (x * 32), (short) (y * 32), "img/sprites/items/block1.png"));
+					blockHandler.add(new Block((short) (x * 32), (short) (y * 32), "img/sprites/items/dirt.png"));
 				}
+
+				//Grass 
+				if(r == 0 && g == 255 && b == 33){
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/grass.png"));
+				}
+
+				//Little bits of extra colors of course
+				if(r == 0 && g == 38 && b == 255){
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/stone1.png"));
+				}
+
 				if (r == 0 && g == 0 && b == 0) {
 					Color c = Color.WHITE;
 					image.setRGB(x, y, c.getRGB());
@@ -252,8 +298,8 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void addLevels() {
-		// new Level(File, handler, width, height)
-		levels[0] = new Level("img/backgrounds/level2.png", (short) 3360, (short) 704);
+		// new Level(File, handler, width, height)//lvl2 3360 
+		levels[0] = new Level("img/backgrounds/level4.png", "img/backgrounds/l1.png", (short) 6240, (short) 704);
 	}
 
 	public static void main(String[] args) {

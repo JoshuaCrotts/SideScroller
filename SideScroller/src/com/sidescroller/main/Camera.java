@@ -26,7 +26,7 @@ public class Camera {
 		if (p.getX() <= Game.WIDTH / 2)
 			this.x = 0;
 		
-		//Camera doesn't shift because palyer is at the end
+		//Camera doesn't shift because player is at the end
 		else if (p.getX() >= Game.levels[Game.currentLevelInt].WIDTH - Game.WIDTH / 2)
 			this.x = Game.levels[Game.currentLevelInt].WIDTH - Game.WIDTH;
 		

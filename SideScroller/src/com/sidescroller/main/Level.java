@@ -20,12 +20,14 @@ public class Level {
 	private short y;
 	
 	private String fileLocation;
+	private String bgFileLocation;
 	
+	private BufferedImage bgImage;
 	private BufferedImage image;
 	
 	private ArrayList<Enemy> enemies;
 	
-	public Level(String fileLocation, short width, short height){
+	public Level(String fileLocation, String bgImage, short width, short height){
 		this.x = 0;
 		this.y = 0;
 		this.enemies = new ArrayList<Enemy>();
@@ -33,12 +35,15 @@ public class Level {
 		this.HEIGHT = height;
 		
 		this.fileLocation = fileLocation;
+		this.bgFileLocation = bgImage;
 		
 		try{
-			image = ImageIO.read(new File(fileLocation));
+			this.image = ImageIO.read(new File(fileLocation));
+			this.bgImage = ImageIO.read(new File(bgFileLocation));
 		}catch(IOException e){
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public void tick(){
@@ -47,7 +52,7 @@ public class Level {
 	
 	public void render(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(this.image, 0, 0, null);
+		g2.drawImage(this.bgImage, 0, 0, null);
 	}
 
 	public void add(Enemy e){
