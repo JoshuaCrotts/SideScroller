@@ -35,7 +35,7 @@ public class Player extends GameObject implements KeyListener {
 
 	// Constants
 	private static final short MAX_VELY = 100;
-	private static final short MAX_VELX = 5;
+	private static final short MAX_VELX = 10; // 10 for Debugging. Should be 5
 	private static final short RUNNINGSPEED = 100;
 
 	// Key codes
@@ -49,7 +49,7 @@ public class Player extends GameObject implements KeyListener {
 	public boolean falling = true;
 	public boolean jumping = false;
 	public boolean movingHorizontal = false;
-	public boolean blockBelow = false;
+	public boolean belowCollision = false;
 	public boolean attacking = false;
 
 	// Player permissions
@@ -67,7 +67,7 @@ public class Player extends GameObject implements KeyListener {
 	public short standingVerticalValue;
 
 	// When above collision, make it appear perfect
-	public short aboveCollisionYValue;
+	public short aboveCollisionYValue = 0;
 	public boolean aboveCollision = false;
 
 	public Player(short x, short y) {
@@ -130,8 +130,7 @@ public class Player extends GameObject implements KeyListener {
 			} else if (jumping) {
 				velY = ((short) (velyInit + (acceleration * time)));
 			}
-			
-			
+
 		} else if (grounded) {
 			// Turn off gravity and reset time.
 			jumping = false;
@@ -166,19 +165,20 @@ public class Player extends GameObject implements KeyListener {
 			playerFacing = Direction.Right;
 			if (!airborne)
 				rAnimator.animate();
-			
+
 		} else if (this.velX < 0) {
 			playerFacing = Direction.Left;
 			if (!airborne)
 				lAnimator.animate();
-		} 
-		
+		}
+
 		else {
 			this.currentSprite = stillSprite;
 		}
 
 		// Will loop through every block between player ticks.
-		this.blockBelow = false;
+		this.belowCollision = false;
+		this.aboveCollision = false;
 		this.canMoveLeft = true;
 		this.canMoveRight = true;
 	}
@@ -212,7 +212,7 @@ public class Player extends GameObject implements KeyListener {
 			canJump = false;
 		}
 
-		if (!blockBelow && !jumping) {
+		if (!belowCollision && !jumping) {
 			falling = true;
 		}
 
@@ -254,7 +254,7 @@ public class Player extends GameObject implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 
-		//Movement keys and attacking keys
+		// Movement keys and attacking keys
 		switch (keyCode) {
 		case KeyEvent.VK_W:
 			upKeyDown = true;
@@ -270,7 +270,7 @@ public class Player extends GameObject implements KeyListener {
 			break;
 		}
 
-		//Draws the Debug screen
+		// Draws the Debug screen
 		if (keyCode == KeyEvent.VK_X) {
 			if (!Game.debug) {
 				Game.debug = true;
@@ -281,7 +281,7 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 
-		//Draws the borders
+		// Draws the borders
 		if (keyCode == KeyEvent.VK_Z) {
 			if (!Game.borders) {
 				Game.borders = true;

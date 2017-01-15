@@ -253,16 +253,6 @@ public class Game extends Canvas implements Runnable {
 
 				g2.setColor(Color.BLUE);
 				g2.drawString("| Collision Borders Enabled: " + Game.borders, 250, 70);
-				/*
-				 * g2.drawString("| Left Collision: "+Player.isCollision[0],250,
-				 * 90);
-				 * g2.drawString("| Right Collision: "+Player.isCollision[1],250,
-				 * 110);
-				 * g2.drawString("| Top Collision: "+Player.isCollision[2],250,
-				 * 130);
-				 * g2.drawString("| Bottom Collision: "+Player.isCollision[3],250,
-				 * 150);
-				 */
 
 				g2.setColor(Color.BLACK);
 				g2.drawString("| Player Last Direction: " + player.getDirection(), 500, 70);
@@ -271,7 +261,7 @@ public class Game extends Canvas implements Runnable {
 				g2.drawString("| Z to enable borders", 500, 130);
 				g2.drawString("| X to toggle debug", 500, 150);
 
-				g2.setColor(Color.GREEN);
+				g2.setColor(Color.BLACK);
 				g2.drawString("| airborne: " + player.airborne, 900, 70);
 				g2.drawString("| falling: " + player.falling, 900, 90);
 				g2.drawString("| jumping: " + player.jumping, 900, 110);

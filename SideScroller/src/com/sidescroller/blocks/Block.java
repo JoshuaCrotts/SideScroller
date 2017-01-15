@@ -32,26 +32,26 @@ public class Block extends GameObject {
 		} catch (IOException e) {
 			System.err.println("Error! Could not load in Block Image");
 		}
-		
+
 		this.setWidth((byte) 32);
 		this.setHeight((byte) 32);
 	}
 
 	@Override
 	public void tick() {
-		
+
 		collision = false;
 
 		// Collision on top of block
 		if (p.getY() + p.getHeight() + p.getVelY() + 1 >= this.y && Game.handler.sameX_Range(this, p)
-				&& Game.handler.sameY_Range(this, p, true)) {
+				&& Game.handler.sameY_Range(this, p, true) && p.getY() < this.y) {
 			collision = true;
 
 			// Set states
 			p.falling = false;
 			p.jumping = false;
 			p.airborne = false;
-			p.blockBelow = true;
+			p.belowCollision = true;
 			p.grounded = true;
 
 			// Setup for next jump
@@ -80,6 +80,17 @@ public class Block extends GameObject {
 			p.canMoveLeft = false;
 		}
 
+		if (p.getY() + p.getVelY() <= this.y + this.getHeight() && this.y < p.getY()
+				&& Game.handler.sameX_Range(this, p) && Game.handler.sameY_Range(this, p, true)) {
+			collision = true;
+
+			p.falling = true;
+			p.aboveCollision = true;
+			p.jumping = false;
+			p.aboveCollisionYValue = (short) (this.y + this.getHeight() + 1);
+
+		}
+
 		// Turns off collision debug
 		collision = false;
 	}
@@ -102,8 +113,8 @@ public class Block extends GameObject {
 
 			g2.draw(getBounds());
 		}
-		
-		//this.tick();
+
+		// this.tick();
 
 	}
 
