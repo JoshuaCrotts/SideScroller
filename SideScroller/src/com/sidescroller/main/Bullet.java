@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.io.File;
+
+import javax.imageio.ImageIO;
 
 public class Bullet extends GameObject{
 	
@@ -13,6 +16,13 @@ public class Bullet extends GameObject{
 		super(x,y, ID.Bullet);
 		
 		this.dir = Game.player.getDirection();
+		
+		try{
+			this.currentSprite = ImageIO.read(new File("resources/img/sprites/p/bullet/bullet1.png"));
+		}catch(Exception e){
+			System.err.println("Error! Could not load bullet image.");
+			e.printStackTrace();
+		}
 		
 		super.setWidth((byte) 10);
 		super.setHeight((byte) 10);
@@ -33,6 +43,12 @@ public class Bullet extends GameObject{
 			Game.handler.getEntities().remove(this);
 		}
 		
+		//Tests explosions
+		if(super.getX() >= 400){
+			Game.handler.add(new Explosion(super.getX(), super.getY(), ID.Explosion));
+			Game.handler.getEntities().remove(this);
+		}
+		
 		//This may need to be extended to compensate for the larger map frame.
 		if(super.getX() >= 3225){
 			Game.handler.getEntities().remove(this);
@@ -43,9 +59,8 @@ public class Bullet extends GameObject{
 	public void render(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
 		
-		g2.setColor(Color.ORANGE);
-		g2.fillOval(super.getX(), super.getY(), 10, 10);
-		g2.setColor(Color.RED);
+		g2.drawImage(this.currentSprite, x, y, null);
+		g2.setColor(Color.BLUE);
 		g2.draw(getBounds());
 		
 	}

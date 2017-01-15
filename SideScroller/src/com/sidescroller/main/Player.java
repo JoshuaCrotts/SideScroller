@@ -330,8 +330,8 @@ public class Player extends GameObject implements KeyListener {
 	private void loadSprites() {
 		for (int i = 0; i < 6; i++) {
 			try {
-				rSprites.add(ImageIO.read(new File("img/sprites/p/r/r" + i + ".png")));
-				lSprites.add(ImageIO.read(new File("img/sprites/p/l/l" + i + ".png")));
+				rSprites.add(ImageIO.read(new File("resources/img/sprites/p/r/r" + i + ".png")));
+				lSprites.add(ImageIO.read(new File("resources/img/sprites/p/l/l" + i + ".png")));
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -340,8 +340,8 @@ public class Player extends GameObject implements KeyListener {
 
 		for (int i = 0; i < 4; i++) {
 			try {
-				uRSprites.add(ImageIO.read(new File("img/sprites/p/ur/u" + i + ".png")));
-				uLSprites.add(ImageIO.read(new File("img/sprites/p/ul/u" + i + ".png")));
+				uRSprites.add(ImageIO.read(new File("resources/img/sprites/p/ur/u" + i + ".png")));
+				uLSprites.add(ImageIO.read(new File("resources/img/sprites/p/ul/u" + i + ".png")));
 			} catch (IOException e) {
 				System.err.println("Error! Could not load UP images");
 			}

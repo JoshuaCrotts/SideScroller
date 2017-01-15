@@ -7,7 +7,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import com.sidescroller.blocks.Block;
 import com.sidescroller.blocks.NCBlock;
@@ -20,6 +24,7 @@ public class Game extends Canvas implements Runnable {
 	public static final short WIDTH = 1280;
 	public static final short HEIGHT = 720;
 	private Window w;
+	private static TitleFrame titleFrame;
 
 	// BufferStrategy/Graphics related objects
 
@@ -44,13 +49,25 @@ public class Game extends Canvas implements Runnable {
 	private short updates;
 	private short currentFPS;
 	private short currentUPS;
-	
+
+	//States
+	public static STATE gameState;
+
+	public enum STATE{
+		Menu,
+		Help,
+		Select,
+		Game,
+		End
+	};
+
 	// Debug tools
 	public static boolean debug = true;
 	public static boolean borders = true;
 	public static boolean unlimitedFPS = false; //Debug Tool to allow for unlimited FPS
 
 	public Game() {
+		titleFrame = new TitleFrame();
 		handler = new Handler(this);
 		blockHandler = new BlockHandler(this);
 		camera = new Camera(0, 0);
@@ -61,6 +78,8 @@ public class Game extends Canvas implements Runnable {
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
+		this.addKeyListener(titleFrame);
+		this.addMouseListener(titleFrame);
 
 		this.start();
 	}
@@ -72,6 +91,7 @@ public class Game extends Canvas implements Runnable {
 			this.t = new Thread(this);
 			this.t.start();
 			this.running = true;
+			gameState = STATE.Menu;
 		}
 	}
 
@@ -121,7 +141,7 @@ public class Game extends Canvas implements Runnable {
 			}
 			stop();
 		}
-		
+
 		if(unlimitedFPS){
 			requestFocus();
 			long lastTime = System.nanoTime();
@@ -158,13 +178,21 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void tick() {
-		if(debug)
-			instance = Runtime.getRuntime();
-		
-		levels[currentLevelInt].tick();
-		handler.tick();
-		camera.tick();
-		blockHandler.tick();
+
+		if(gameState == STATE.Menu){
+			titleFrame.tick();
+		}
+
+		if(gameState == STATE.Game){
+			titleFrame = null;
+			if(debug)
+				instance = Runtime.getRuntime();
+
+			levels[currentLevelInt].tick();
+			handler.tick();
+			camera.tick();
+			blockHandler.tick();
+		}
 	}
 
 	private void render() {
@@ -180,82 +208,97 @@ public class Game extends Canvas implements Runnable {
 
 		// DRAW HERE
 
-		g.setColor(Color.WHITE);
+		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		
+		//****************MENU STATE**********************//
+		if(gameState == STATE.Menu){
+		
+			titleFrame.render(g);
+		}
+		//****************END MENU STATE******************//
+		
+		
+		
+		
+		//****************GAME STATE**********************//
+		if(gameState == STATE.Game){
+			titleFrame = null;
 
-		// Begin of camera
-		g2.translate(camera.getTranslationX(), camera.getTranslationY());
+			// Begin of camera
+			g2.translate(camera.getTranslationX(), camera.getTranslationY());
 
-		levels[currentLevelInt].render(g);
-		handler.render(g);
-		blockHandler.render(g);
+			levels[currentLevelInt].render(g);
+			handler.render(g);
+			blockHandler.render(g);
 
-		// End of camera
-		g2.translate(-camera.getTranslationX(), -camera.getTranslationY());
+			// End of camera
+			g2.translate(-camera.getTranslationX(), -camera.getTranslationY());
 
-		// FPS drawer
+			// FPS drawer
 
-		if (debug) {
-			Font f = new Font("Arial", Font.BOLD, 14);
-			g2.setFont(f);
-			g2.setColor(Color.BLACK);
-			g2.drawString("Side Scroller Alpha - DEBUG MODE", 40, 50);
-			g2.drawString("| FPS: " + currentFPS, 40, 70);
-			g2.drawString("| UPS: " + currentUPS, 40, 90);
+			if (debug) {
+				Font f = new Font("Arial", Font.BOLD, 14);
+				g2.setFont(f);
+				g2.setColor(Color.WHITE);
+				g2.drawString("Side Scroller Alpha 1.1.0 - DEBUG MODE", 40, 50);
+				g2.drawString("| FPS: " + currentFPS, 40, 70);
+				g2.drawString("| UPS: " + currentUPS, 40, 90);
 
-			g2.setColor(Color.RED);
-			g2.drawString("| Player X: " + player.getX(), 120, 70);
-			g2.drawString("| Player Y: " + player.getX(), 120, 90);
-			g2.drawString("| Player Vel X: " + player.getVelX(), 120, 110);
-			g2.drawString("| Player Vel Y: " + player.getVelY(), 120, 130);
+				g2.setColor(Color.RED);
+				g2.drawString("| Player X: " + player.getX(), 120, 70);
+				g2.drawString("| Player Y: " + player.getX(), 120, 90);
+				g2.drawString("| Player Vel X: " + player.getVelX(), 120, 110);
+				g2.drawString("| Player Vel Y: " + player.getVelY(), 120, 130);
 
-			g2.setColor(Color.BLUE);
-			g2.drawString("| Collision Borders Enabled: " + Block.drawBounds, 250, 70);
-			/*
-			 * g2.drawString("| Left Collision: "+Player.isCollision[0],250,
-			 * 90);
-			 * g2.drawString("| Right Collision: "+Player.isCollision[1],250,
-			 * 110);
-			 * g2.drawString("| Top Collision: "+Player.isCollision[2],250,
-			 * 130);
-			 * g2.drawString("| Bottom Collision: "+Player.isCollision[3],250,
-			 * 150);
-			 */
+				g2.setColor(Color.BLUE);
+				g2.drawString("| Collision Borders Enabled: " + Game.borders, 250, 70);
+				/*
+				 * g2.drawString("| Left Collision: "+Player.isCollision[0],250,
+				 * 90);
+				 * g2.drawString("| Right Collision: "+Player.isCollision[1],250,
+				 * 110);
+				 * g2.drawString("| Top Collision: "+Player.isCollision[2],250,
+				 * 130);
+				 * g2.drawString("| Bottom Collision: "+Player.isCollision[3],250,
+				 * 150);
+				 */
 
-			g2.setColor(Color.BLACK);
-			g2.drawString("| Player Last Direction: " + player.getDirection(), 500, 70);
-			g2.drawString("| # of Block Entities: " + blockHandler.getBlocks().size(), 500, 90);
-			g2.drawString("| # of GameObject Entities: " + handler.getEntities().size(), 500, 110);
-			g2.drawString("| Z to enable borders", 500, 130);
-			g2.drawString("| X to toggle debug", 500, 150);
+				g2.setColor(Color.BLACK);
+				g2.drawString("| Player Last Direction: " + player.getDirection(), 500, 70);
+				g2.drawString("| # of Block Entities: " + blockHandler.getBlocks().size(), 500, 90);
+				g2.drawString("| # of GameObject Entities: " + handler.getEntities().size(), 500, 110);
+				g2.drawString("| Z to enable borders", 500, 130);
+				g2.drawString("| X to toggle debug", 500, 150);
 
-			g2.setColor(Color.GREEN);
-			g2.drawString("| airborne: " + player.airborne, 900, 70);
-			g2.drawString("| falling: " + player.falling, 900, 90);
-			g2.drawString("| jumping: " + player.jumping, 900, 110);
-			g2.drawString("| movingHorizontal: " + player.movingHorizontal, 900, 130);
-			g2.drawString("| grounded: " + player.grounded, 900, 150);
-			g2.drawString("| canJump: " + player.canJump, 900, 170);
-			g2.drawString("| canMoveRight: " + player.canMoveRight, 900, 190);
-			g2.drawString("| canMoveLeft: " + player.canMoveLeft, 900, 210);
+				g2.setColor(Color.GREEN);
+				g2.drawString("| airborne: " + player.airborne, 900, 70);
+				g2.drawString("| falling: " + player.falling, 900, 90);
+				g2.drawString("| jumping: " + player.jumping, 900, 110);
+				g2.drawString("| movingHorizontal: " + player.movingHorizontal, 900, 130);
+				g2.drawString("| grounded: " + player.grounded, 900, 150);
+				g2.drawString("| canJump: " + player.canJump, 900, 170);
+				g2.drawString("| canMoveRight: " + player.canMoveRight, 900, 190);
+				g2.drawString("| canMoveLeft: " + player.canMoveLeft, 900, 210);
 
-			g2.setColor(Color.ORANGE);
+				g2.setColor(Color.ORANGE);
 
-			if(!unlimitedFPS){
-				g2.drawString("Heap utilization statistics [KB]", 40, 180);
-				g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
-				g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
-				g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
-				g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);
+				if(!unlimitedFPS){
+					g2.drawString("Heap utilization statistics [KB]", 40, 180);
+					g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
+					g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
+					g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
+					g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);
+				}
+
+				/*
+				 * public boolean grounded = false; public boolean airborne = true;
+				 * public boolean falling = true; public boolean jumping = false;
+				 * public boolean movingHorizontal = false; public boolean canJump =
+				 * false;
+				 */
+
 			}
-
-			/*
-			 * public boolean grounded = false; public boolean airborne = true;
-			 * public boolean falling = true; public boolean jumping = false;
-			 * public boolean movingHorizontal = false; public boolean canJump =
-			 * false;
-			 */
-
 		}
 		// END DRAWING
 
@@ -269,59 +312,57 @@ public class Game extends Canvas implements Runnable {
 
 		Random aesthetic = new Random();
 		int block = 0;
-		
+
 		for (int x = 0; x < w; x++) {
 			for (int y = 0; y < h; y++) {
 				int pixel = image.getRGB(x, y);
-				
+
 				block = aesthetic.nextInt(3);
-				
+
 				short r = (short) ((pixel >> 16) & 0xff);
 				short g = (short) ((pixel >> 8) & 0xff);
 				short b = (short) ((pixel) & 0xff);
 
 				if (r == 255 && g == 255 && b == 255) {
-					blockHandler.add(new Block((short) (x * 32), (short) (y * 32), "img/sprites/items/dirt.png"));
+					blockHandler.add(new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/dirt.png"));
 				}
 
 				//Grass 
 				if(r == 0 && g == 255 && b == 33){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/grass.png"));
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/grass.png"));
 				}
 				//Left Side Grass
 				if(r == 199 && g == 255 && b == 45){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/lsidegrass1.png"));
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/lsidegrass1.png"));
 				}
 				//Right Side Grass
 				if(r == 160 && g == 255 && b == 207){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/rsidegrass1.png"));
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/rsidegrass1.png"));
 				}
-				
+
 				//Left Corner Grass
 				if(r == 0 && g == 127 && b == 14){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/clgrass1.png"));
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/clgrass1.png"));
 				}
 				//Right Corner Grass
 				if(r == 95 && g == 226 && b == 165){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/crgrass1.png"));
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/crgrass1.png"));
 				}
 
 				//Little bits of extra colors of course; adds stone blocks
 				if(r == 0 && g == 38 && b == 255){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "img/sprites/items/stone1.png"));
+					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/stone1.png"));
 				}
-				
+
 				//Random chooser for the shrubs and flowers.
 				if(r == 255 && g == 255 && b == 0){
-					
-					System.out.println(block);
 					if(block == 0)
-						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "img/sprites/items/shrub1.png"));
+						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "resources/img/sprites/items/shrub1.png"));
 					if(block == 1)
-						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "img/sprites/items/shrub2.png"));
+						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "resources/img/sprites/items/shrub2.png"));
 					if(block == 2)
-						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "img/sprites/items/flower1.png"));
-					}
+						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "resources/img/sprites/items/flower1.png"));
+				}
 
 				if (r == 0 && g == 0 && b == 0) {
 					Color c = Color.WHITE;
@@ -334,7 +375,7 @@ public class Game extends Canvas implements Runnable {
 
 	private void addLevels() {
 		// new Level(File, handler, width, height)//lvl2 3360 
-		levels[0] = new Level("img/backgrounds/level6.png", "img/backgrounds/l1.png", (short) 6240, (short) 704);
+		levels[0] = new Level("resources/img/backgrounds/level6.png", "resources/img/backgrounds/l1.png", (short) 6240, (short) 704);
 	}
 
 	public static void main(String[] args) {
