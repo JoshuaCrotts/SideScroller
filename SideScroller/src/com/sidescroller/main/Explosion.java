@@ -45,10 +45,10 @@ public class Explosion extends GameObject{
 	}
 	
 	public void render(Graphics g){
-		g.drawImage(this.currentSprite, getX(), getY(), null);
+		g.drawImage(this.currentSprite, super.x, super.y, null);
 	}
 	
 	public Rectangle getBounds(){
-		return new Rectangle(getX(),getY(),getWidth(),getHeight());
+		return new Rectangle(super.x,y,super.getWidth(),super.getHeight());
 	}
 }
