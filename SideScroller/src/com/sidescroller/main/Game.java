@@ -274,7 +274,7 @@ public class Game extends Canvas implements Runnable {
 
 				if(!unlimitedFPS){
 					g2.drawString("Heap utilization statistics [KB]", 40, 180);
-					g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
+					//g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
 					g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
 					g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
 					g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);

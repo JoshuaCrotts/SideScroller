@@ -67,7 +67,7 @@ public class Block extends GameObject {
 			collision = true;
 
 			p.rightCollisionXValue = (short) (this.x - p.getWidth() - 1);
-			p.rightCollision = false;
+			p.rightCollision = true;;
 		}
 
 		// Collision on Right side of block
@@ -78,7 +78,7 @@ public class Block extends GameObject {
 			collision = true;
 			
 			p.leftCollisionXValue = (short) (this.x + this.getWidth() + 1);
-			p.leftCollision = false;
+			p.leftCollision = true;
 		}
 
 		if (p.getY() + p.getVelY() <= this.y + this.getHeight() && this.y < p.getY()
