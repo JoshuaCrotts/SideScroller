@@ -52,12 +52,11 @@ public class Block extends GameObject {
 			p.jumping = false;
 			p.airborne = false;
 			p.belowCollision = true;
-			p.grounded = true;
-
+			
 			// Setup for next jump
 			p.canJump = true;
 			p.setTime(0);
-			p.standingVerticalValue = (short) (this.y - p.getHeight() - 1);
+			p.belowCollisionYValue = (short) (this.y - p.getHeight() - 1);
 		}
 
 		// Collision on Left side of block
@@ -67,7 +66,8 @@ public class Block extends GameObject {
 			// When true, box is outlined
 			collision = true;
 
-			p.canMoveRight = false;
+			p.rightCollisionXValue = (short) (this.x - p.getWidth() - 1);
+			p.rightCollision = false;
 		}
 
 		// Collision on Right side of block
@@ -76,8 +76,9 @@ public class Block extends GameObject {
 
 			// When true, box is outlined
 			collision = true;
-
-			p.canMoveLeft = false;
+			
+			p.leftCollisionXValue = (short) (this.x + this.getWidth() + 1);
+			p.leftCollision = false;
 		}
 
 		if (p.getY() + p.getVelY() <= this.y + this.getHeight() && this.y < p.getY()

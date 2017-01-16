@@ -35,7 +35,7 @@ public class Player extends GameObject implements KeyListener {
 
 	// Constants
 	private static final short MAX_VELY = 100;
-	private static final short MAX_VELX = 10; // 10 for Debugging. Should be 5
+	private static final short MAX_VELX = 5;
 	private static final short RUNNINGSPEED = 100;
 
 	// Key codes
@@ -44,18 +44,12 @@ public class Player extends GameObject implements KeyListener {
 	private boolean upKeyDown = false;
 
 	// Player states
-	public boolean grounded = false;
 	public boolean airborne = true;
 	public boolean falling = true;
 	public boolean jumping = false;
 	public boolean movingHorizontal = false;
-	public boolean belowCollision = false;
 	public boolean attacking = false;
-
-	// Player permissions
 	public boolean canJump = false;
-	public boolean canMoveRight = true;
-	public boolean canMoveLeft = true;
 
 	// Physics (jumping and falling)
 	private int velyInit = -10;
@@ -63,12 +57,17 @@ public class Player extends GameObject implements KeyListener {
 	private double acceleration = 0;
 	private double time = 0;
 
-	// While the player is running, player maintains y = standingVer...
-	public short standingVerticalValue;
+	// Collision values
+	public short belowCollisionYValue = 0;
+	public short aboveCollisionYValue = 0;
+	public short leftCollisionXValue = 0;
+	public short rightCollisionXValue = 0;
 
 	// When above collision, make it appear perfect
-	public short aboveCollisionYValue = 0;
 	public boolean aboveCollision = false;
+	public boolean belowCollision = false;
+	public boolean rightCollision = true;
+	public boolean leftCollision = true;
 
 	public Player(short x, short y) {
 		super(x, y, ID.Player);
@@ -131,14 +130,14 @@ public class Player extends GameObject implements KeyListener {
 				velY = ((short) (velyInit + (acceleration * time)));
 			}
 
-		} else if (grounded) {
+		} else if (belowCollision) {
 			// Turn off gravity and reset time.
 			jumping = false;
 			// acceleration = 0;
 			time = 0;
 
 			canJump = true;
-			this.y = standingVerticalValue;
+			this.y = belowCollisionYValue;
 		}
 
 		if (attacking) {
@@ -150,10 +149,10 @@ public class Player extends GameObject implements KeyListener {
 
 		// Horizontal stuff
 		if (movingHorizontal) {
-			if (rightKeyDown && canMoveRight) {
+			if (rightKeyDown && !rightCollision) {
 				velX += RUNNINGSPEED;
 			}
-			if (leftKeyDown && canMoveLeft) {
+			if (leftKeyDown && !leftCollision) {
 				velX -= RUNNINGSPEED;
 			}
 		} else {
@@ -179,8 +178,8 @@ public class Player extends GameObject implements KeyListener {
 		// Will loop through every block between player ticks.
 		this.belowCollision = false;
 		this.aboveCollision = false;
-		this.canMoveLeft = true;
-		this.canMoveRight = true;
+		this.leftCollision = false;
+		this.rightCollision = false;
 	}
 
 	private void setVelocities() {
@@ -190,14 +189,14 @@ public class Player extends GameObject implements KeyListener {
 			this.velX = (short) (MAX_VELX * (this.velX / Math.abs(this.velX)));
 		}
 		if (Math.abs(this.velY) >= MAX_VELY) {
-			this.velY = MAX_VELY;
+			this.velY = (short) (MAX_VELY * (this.velY / Math.abs(this.velX)));
 		}
 
 		this.x += this.velX;
 
 		// If on the ground, this value will be with the box it collided with
-		if (grounded) {
-			this.y = standingVerticalValue;
+		if (belowCollision) {
+			this.y = belowCollisionYValue;
 		} else if (aboveCollision) {
 			this.y = aboveCollisionYValue;
 		} else {
@@ -218,7 +217,7 @@ public class Player extends GameObject implements KeyListener {
 
 		if (jumping || falling) {
 			airborne = true;
-			grounded = false;
+			belowCollision = false;
 		}
 
 		if (this.leftKeyDown || this.rightKeyDown) {
