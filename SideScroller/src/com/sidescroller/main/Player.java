@@ -98,8 +98,8 @@ public class Player extends GameObject implements KeyListener {
 
 		setVelocities();
 
-		velX = 0;
-		velY = 0;
+		setVelX((short) 0);
+		setVelY((short) 0);
 
 		/**
 		 * 
@@ -125,9 +125,9 @@ public class Player extends GameObject implements KeyListener {
 			time++;
 
 			if (falling) {
-				this.velY = (short) (acceleration * time);
+				this.setVelY((short) (acceleration * time));
 			} else if (jumping) {
-				velY = ((short) (velyInit + (acceleration * time)));
+				this.setVelY((short) (velyInit + (acceleration * time)));
 			}
 
 		} else if (belowCollision) {
@@ -137,7 +137,7 @@ public class Player extends GameObject implements KeyListener {
 			time = 0;
 
 			canJump = true;
-			this.y = belowCollisionYValue;
+			this.setY(belowCollisionYValue);
 		}
 
 		if (attacking) {
@@ -150,22 +150,22 @@ public class Player extends GameObject implements KeyListener {
 		// Horizontal stuff
 		if (movingHorizontal) {
 			if (rightKeyDown && !rightCollision) {
-				velX += RUNNINGSPEED;
+				setVelX((short) (getVelX() + RUNNINGSPEED));
 			}
 			if (leftKeyDown && !leftCollision) {
-				velX -= RUNNINGSPEED;
+				setVelX((short) (getVelX() - RUNNINGSPEED));
 			}
 		} else {
-			velX = 0;
+			setVelX((short) 0);
 		}
 
 		// Player Direction
-		if (this.velX > 0) {
+		if (this.getVelX() > 0) {
 			playerFacing = Direction.Right;
 			if (!airborne)
 				rAnimator.animate();
 
-		} else if (this.velX < 0) {
+		} else if (this.getVelX() < 0) {
 			playerFacing = Direction.Left;
 			if (!airborne)
 				lAnimator.animate();
@@ -185,22 +185,22 @@ public class Player extends GameObject implements KeyListener {
 	private void setVelocities() {
 
 		// Limit Velocities
-		if (Math.abs(this.velX) >= MAX_VELX) {
-			this.velX = (short) (MAX_VELX * (this.velX / Math.abs(this.velX)));
+		if (Math.abs(this.getVelX()) >= MAX_VELX) {
+			this.setVelX((short) (MAX_VELX * (this.getVelX() / Math.abs(this.getVelX()))));
 		}
-		if (Math.abs(this.velY) >= MAX_VELY) {
-			this.velY = (short) (MAX_VELY * (this.velY / Math.abs(this.velX)));
+		if (Math.abs(this.getVelY()) >= MAX_VELY) {
+			this.setVelY((short) (MAX_VELY * (this.getVelY() / Math.abs(this.getVelX()))));
 		}
 
-		this.x += this.velX;
+		this.setX((short) (this.getX() + this.getVelX()));
 
 		// If on the ground, this value will be with the box it collided with
 		if (belowCollision) {
-			this.y = belowCollisionYValue;
+			this.setY(belowCollisionYValue);
 		} else if (aboveCollision) {
-			this.y = aboveCollisionYValue;
+			this.setY(aboveCollisionYValue);
 		} else {
-			this.y += velY;
+			this.setY((short)(this.getY() + this.getVelY()));
 		}
 	}
 
@@ -243,7 +243,7 @@ public class Player extends GameObject implements KeyListener {
 	}
 
 	private boolean isMoving() {
-		if (velX == 0 && velY == 0) {
+		if (getVelX() == 0 && getVelY() == 0) {
 			return false;
 		}
 		return true;
@@ -311,11 +311,11 @@ public class Player extends GameObject implements KeyListener {
 		// Left and right are special cases
 		case KeyEvent.VK_A:
 			leftKeyDown = false;
-			velX += RUNNINGSPEED;
+			setVelX((short) (getVelX() + RUNNINGSPEED));
 			break;
 		case KeyEvent.VK_D:
 			rightKeyDown = false;
-			velX -= RUNNINGSPEED;
+			setVelX((short) (getVelX() - RUNNINGSPEED));
 			break;
 		}
 

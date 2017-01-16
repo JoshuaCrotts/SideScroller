@@ -7,11 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 import com.sidescroller.blocks.Block;
 import com.sidescroller.blocks.NCBlock;
@@ -241,13 +237,13 @@ public class Game extends Canvas implements Runnable {
 				Font f = new Font("Arial", Font.BOLD, 14);
 				g2.setFont(f);
 				g2.setColor(Color.WHITE);
-				g2.drawString("Side Scroller Alpha 1.1.0 - DEBUG MODE", 40, 50);
+				g2.drawString("Side Scroller Alpha 1.1.1 - DEBUG MODE", 40, 50);
 				g2.drawString("| FPS: " + currentFPS, 40, 70);
 				g2.drawString("| UPS: " + currentUPS, 40, 90);
 
 				g2.setColor(Color.RED);
 				g2.drawString("| Player X: " + player.getX(), 120, 70);
-				g2.drawString("| Player Y: " + player.getX(), 120, 90);
+				g2.drawString("| Player Y: " + player.getY(), 120, 90);
 				g2.drawString("| Player Vel X: " + player.getVelX(), 120, 110);
 				g2.drawString("| Player Vel Y: " + player.getVelY(), 120, 130);
 
