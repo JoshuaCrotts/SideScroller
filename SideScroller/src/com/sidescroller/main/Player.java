@@ -49,7 +49,7 @@ public class Player extends GameObject implements KeyListener {
 	public boolean jumping = false;
 	public boolean movingHorizontal = false;
 	public boolean attacking = false;
-	
+
 	// Physics (jumping and falling)
 	private int velyInit = -10;
 	private double acclerationOfGravity = .5;
@@ -72,7 +72,7 @@ public class Player extends GameObject implements KeyListener {
 		super(x, y, ID.Player);
 
 		this.loadSprites();
-		
+
 		this.rAnimator = new Animator(rSprites, (byte) 30, this);
 		this.lAnimator = new Animator(lSprites, (byte) 30, this);
 		this.uRAnimator = new Animator(uRSprites, (byte) 30, this);
@@ -129,7 +129,6 @@ public class Player extends GameObject implements KeyListener {
 		} else if (belowCollision) {
 			// Turn off gravity and reset time.
 			jumping = false;
-			// acceleration = 0;
 			time = 0;
 		}
 
@@ -177,10 +176,23 @@ public class Player extends GameObject implements KeyListener {
 
 	private void setVelocities() {
 		limitVelocities();
-		
-		this.x += this.velX;
 
-		// If on the ground, this value will be with the box it collided with
+		if (leftCollision) {
+			this.x = leftCollisionXValue;
+		} else if (rightCollision) {
+			this.x = rightCollisionXValue;
+		} else {
+			this.x += this.velX;
+		}
+
+		setYCoordinate();
+
+		velX = 0;
+		velY = 0;
+
+	}
+
+	private void setYCoordinate() {
 		if (belowCollision) {
 			this.y = belowCollisionYValue;
 		} else if (aboveCollision) {
@@ -188,11 +200,6 @@ public class Player extends GameObject implements KeyListener {
 		} else {
 			this.y += velY;
 		}
-		
-
-		velX = 0;
-		velY = 0;
-
 	}
 
 	private void limitVelocities() {

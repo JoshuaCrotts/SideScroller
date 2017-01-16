@@ -256,9 +256,10 @@ public class Game extends Canvas implements Runnable {
 				g2.drawString("| falling: " + player.falling, 900, 90);
 				g2.drawString("| jumping: " + player.jumping, 900, 110);
 				g2.drawString("| movingHorizontal: " + player.movingHorizontal, 900, 130);
-				//g2.drawString("| canJump: " + player.canJump, 900, 170);
 				g2.drawString("| rightCollision: " + player.rightCollision, 900, 190);
 				g2.drawString("| leftCollision: " + player.leftCollision, 900, 210);
+				g2.drawString("| aboveCollision: " + player.aboveCollision, 900, 230);
+				g2.drawString("| belowCollision: " + player.belowCollision, 900, 250);
 
 				g2.setColor(Color.ORANGE);
 

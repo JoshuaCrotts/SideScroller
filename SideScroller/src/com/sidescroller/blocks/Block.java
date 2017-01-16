@@ -65,27 +65,25 @@ public class Block extends GameObject {
 	}
 
 	private void testRightOfBlockCollision() {
-		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && p.getX() < this.x
+		if (p.getX() + p.getVelX() <= this.x + this.getWidth() && p.getX() > this.x
 				&& Game.handler.sameX_Range(this, p) && Game.handler.sameY_Range(this, p, false)) {
-
-			System.out.println("Test");
 
 			// When true, box is outlined
 			collision = true;
 
-			p.leftCollisionXValue = (short) (this.x + this.getWidth() + 1);
+			p.leftCollisionXValue = (short) (this.x + this.getWidth());
 			p.leftCollision = true;
 		}
 	}
 
 	private void testLeftOfBlockCollision() {
-		if (p.getX() + p.getWidth() + p.getVelX() >= this.x && p.getX() > this.x && Game.handler.sameX_Range(this, p)
+		if (p.getX() + p.getWidth() + p.getVelX() >= this.x && p.getX() < this.x && Game.handler.sameX_Range(this, p)
 				&& Game.handler.sameY_Range(this, p, false)) {
 
 			// When true, box is outlined
 			collision = true;
 
-			p.rightCollisionXValue = (short) (this.x - p.getWidth() - 1);
+			p.rightCollisionXValue = (short) (this.x - p.getWidth());
 			p.rightCollision = true;
 		}
 	}
