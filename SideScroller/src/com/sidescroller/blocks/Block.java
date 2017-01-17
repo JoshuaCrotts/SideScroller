@@ -52,45 +52,9 @@ public class Block extends GameObject {
 		testBottomOfBlockCollision();
 	}
 
-	private void testBottomOfBlockCollision() {
-		if (p.getY() + p.getVelY() <= this.y + this.getHeight() && this.y < p.getY()
-				&& Game.handler.sameX_Range(this, p) && Game.handler.sameY_Range(this, p, true)) {
-			collision = true;
-			p.falling = true;
-			p.jumping = false;
-
-			p.aboveCollisionYValue = (short) (this.y + this.getHeight() + 1);
-			p.aboveCollision = true;
-		}
-	}
-
-	private void testRightOfBlockCollision() {
-		if (p.getX() + p.getVelX() <= this.x + this.getWidth() && p.getX() > this.x
-				&& Game.handler.sameX_Range(this, p) && Game.handler.sameY_Range(this, p, false)) {
-
-			// When true, box is outlined
-			collision = true;
-
-			p.leftCollisionXValue = (short) (this.x + this.getWidth());
-			p.leftCollision = true;
-		}
-	}
-
-	private void testLeftOfBlockCollision() {
-		if (p.getX() + p.getWidth() + p.getVelX() >= this.x && p.getX() < this.x && Game.handler.sameX_Range(this, p)
-				&& Game.handler.sameY_Range(this, p, false)) {
-
-			// When true, box is outlined
-			collision = true;
-
-			p.rightCollisionXValue = (short) (this.x - p.getWidth());
-			p.rightCollision = true;
-		}
-	}
-
 	private void testTopOfBlockCollision() {
-		if (p.getY() + p.getHeight() + p.getVelY() + 1 >= this.y && Game.handler.sameX_Range(this, p)
-				&& Game.handler.sameY_Range(this, p, true) && p.getY() < this.y) {
+		if (p.getY() + p.getHeight() + p.getVelY() + 1 >= this.y && p.getY() < this.y
+				&& Game.handler.sameX_Range(this, p, false) && Game.handler.sameY_Range(this, p, true)) {
 			collision = true;
 
 			// Set states
@@ -101,6 +65,45 @@ public class Block extends GameObject {
 
 			p.belowCollision = true;
 			p.belowCollisionYValue = (short) (this.y - p.getHeight() - 1);
+		}
+	}
+
+	private void testBottomOfBlockCollision() {
+		if (p.getY() + p.getVelY() <= this.y + this.getHeight() && this.y < p.getY()
+				&& Game.handler.sameX_Range(this, p, false) && Game.handler.sameY_Range(this, p, true)) {
+			collision = true;
+			p.falling = true;
+			p.jumping = false;
+
+			p.aboveCollisionYValue = (short) (this.y + this.getHeight() + 1);
+			p.aboveCollision = true;
+		}
+	}
+
+	private void testRightOfBlockCollision() {
+		if (this.x == 0 && this.y == 544) {
+			System.out.println("\nSame X:" + Game.handler.sameX_Range(this, p, true));
+			System.out.println("Same Y: " + Game.handler.sameY_Range(this, p, true));
+		}
+		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && p.getX() > this.x
+				&& Game.handler.sameX_Range(this, p, true) && Game.handler.sameY_Range(this, p, false)) {
+			// When true, box is outlined
+			collision = true;
+
+			p.leftCollisionXValue = (short) (this.x + this.getWidth() + 1);
+			p.leftCollision = true;
+		}
+	}
+
+	private void testLeftOfBlockCollision() {
+		if (p.getX() + p.getWidth() + p.getVelX() + 1 >= this.x && p.getX() < this.x
+				&& Game.handler.sameX_Range(this, p, true) && Game.handler.sameY_Range(this, p, false)) {
+
+			// When true, box is outlined
+			collision = true;
+
+			p.rightCollisionXValue = (short) (this.x - p.getWidth() - 1);
+			p.rightCollision = true;
 		}
 	}
 

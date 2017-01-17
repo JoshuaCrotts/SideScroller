@@ -177,6 +177,17 @@ public class Player extends GameObject implements KeyListener {
 	private void setVelocities() {
 		limitVelocities();
 
+		setXCoordinate();
+
+		setYCoordinate();
+
+		velX = 0;
+		velY = 0;
+
+	}
+
+	private void setXCoordinate() {
+
 		if (leftCollision) {
 			this.x = leftCollisionXValue;
 		} else if (rightCollision) {
@@ -184,12 +195,7 @@ public class Player extends GameObject implements KeyListener {
 		} else {
 			this.x += this.velX;
 		}
-
-		setYCoordinate();
-
-		velX = 0;
-		velY = 0;
-
+		System.out.println("player.x = " + this.x + " left Collision: " + leftCollision);
 	}
 
 	private void setYCoordinate() {
