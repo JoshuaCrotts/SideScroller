@@ -59,7 +59,7 @@ public class Bullet extends GameObject{
 	public void render(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
 		
-		g2.drawImage(this.currentSprite, getX(), getY(), null);
+		g2.drawImage(this.currentSprite, x, y, null);
 		g2.setColor(Color.BLUE);
 		g2.draw(getBounds());
 		

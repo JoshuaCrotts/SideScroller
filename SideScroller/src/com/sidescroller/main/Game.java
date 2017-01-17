@@ -7,7 +7,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
 
 import com.sidescroller.blocks.Block;
 import com.sidescroller.blocks.NCBlock;
@@ -31,7 +35,7 @@ public class Game extends Canvas implements Runnable {
 	public static Camera camera;
 	public static BlockHandler blockHandler;
 
-	//Memory variables
+	// Memory variables
 	private Runtime instance;
 	private short kb = 1024;
 
@@ -46,21 +50,18 @@ public class Game extends Canvas implements Runnable {
 	private short currentFPS;
 	private short currentUPS;
 
-	//States
-	public static STATE gameState;
+	// States
+	public static State gameState;
 
-	public enum STATE{
-		Menu,
-		Help,
-		Select,
-		Game,
-		End
+	public enum State {
+		Menu, Help, Select, Game, End
 	};
 
 	// Debug tools
 	public static boolean debug = true;
 	public static boolean borders = true;
-	public static boolean unlimitedFPS = false; //Debug Tool to allow for unlimited FPS
+	public static boolean unlimitedFPS = false; // Debug Tool to allow for
+												// unlimited FPS
 
 	public Game() {
 		titleFrame = new TitleFrame();
@@ -87,7 +88,7 @@ public class Game extends Canvas implements Runnable {
 			this.t = new Thread(this);
 			this.t.start();
 			this.running = true;
-			gameState = STATE.Menu;
+			gameState = State.Menu;
 		}
 	}
 
@@ -105,7 +106,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void run() {
-		if(!unlimitedFPS){
+		if (!unlimitedFPS) {
 			requestFocus();
 
 			long lastTime = System.nanoTime();
@@ -138,7 +139,7 @@ public class Game extends Canvas implements Runnable {
 			stop();
 		}
 
-		if(unlimitedFPS){
+		if (unlimitedFPS) {
 			requestFocus();
 			long lastTime = System.nanoTime();
 			double amountOfTicks = 60.0;
@@ -147,24 +148,21 @@ public class Game extends Canvas implements Runnable {
 			long timer = System.currentTimeMillis();
 			this.frames = 0;
 
-			while(running)
-			{
+			while (running) {
 				long now = System.nanoTime();
 				delta += (now - lastTime) / ns;
 				lastTime = now;
-				while(delta >=1)
-				{
+				while (delta >= 1) {
 					tick();
 					delta--;
 				}
-				if(running)
+				if (running)
 					render();
 				this.frames++;
 
-				if(System.currentTimeMillis() - timer > 1000)
-				{
+				if (System.currentTimeMillis() - timer > 1000) {
 					timer += 1000;
-					//System.out.println("FPS: "+ this.frames);
+					// System.out.println("FPS: "+ this.frames);
 					currentFPS = this.frames;
 					this.frames = 0;
 				}
@@ -175,15 +173,14 @@ public class Game extends Canvas implements Runnable {
 
 	private void tick() {
 
-		if(gameState == STATE.Menu){
+		instance = Runtime.getRuntime();
+
+		if (gameState == State.Menu) {
 			titleFrame.tick();
 		}
 
-		if(gameState == STATE.Game){
+		if (gameState == State.Game) {
 			titleFrame = null;
-			if(debug)
-				instance = Runtime.getRuntime();
-
 			levels[currentLevelInt].tick();
 			handler.tick();
 			camera.tick();
@@ -206,19 +203,16 @@ public class Game extends Canvas implements Runnable {
 
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		
-		//****************MENU STATE**********************//
-		if(gameState == STATE.Menu){
-		
+
+		// ****************MENU STATE**********************//
+		if (gameState == State.Menu) {
+
 			titleFrame.render(g);
 		}
-		//****************END MENU STATE******************//
-		
-		
-		
-		
-		//****************GAME STATE**********************//
-		if(gameState == STATE.Game){
+		// ****************END MENU STATE******************//
+
+		// ****************GAME STATE**********************//
+		if (gameState == State.Game) {
 			titleFrame = null;
 
 			// Begin of camera
@@ -237,7 +231,7 @@ public class Game extends Canvas implements Runnable {
 				Font f = new Font("Arial", Font.BOLD, 14);
 				g2.setFont(f);
 				g2.setColor(Color.WHITE);
-				g2.drawString("Side Scroller Alpha 1.1.1 - DEBUG MODE", 40, 50);
+				g2.drawString("Side Scroller Alpha 1.1.0 - DEBUG MODE", 40, 50);
 				g2.drawString("| FPS: " + currentFPS, 40, 70);
 				g2.drawString("| UPS: " + currentUPS, 40, 90);
 
@@ -262,25 +256,26 @@ public class Game extends Canvas implements Runnable {
 				g2.drawString("| falling: " + player.falling, 900, 90);
 				g2.drawString("| jumping: " + player.jumping, 900, 110);
 				g2.drawString("| movingHorizontal: " + player.movingHorizontal, 900, 130);
-				g2.drawString("| canJump: " + player.canJump, 900, 170);
-				g2.drawString("| canMoveRight: " + player.rightCollision, 900, 190);
-				g2.drawString("| canMoveLeft: " + player.leftCollision, 900, 210);
+				g2.drawString("| rightCollision: " + player.rightCollision, 900, 190);
+				g2.drawString("| leftCollision: " + player.leftCollision, 900, 210);
+				g2.drawString("| aboveCollision: " + player.aboveCollision, 900, 230);
+				g2.drawString("| belowCollision: " + player.belowCollision, 900, 250);
 
 				g2.setColor(Color.ORANGE);
 
-				if(!unlimitedFPS){
+				if (!unlimitedFPS) {
 					g2.drawString("Heap utilization statistics [KB]", 40, 180);
-					//g2.drawString("Total Memory: "+instance.totalMemory()/kb, 40, 200);
-					g2.drawString("Free Memory: "+instance.freeMemory()/kb, 40, 220);
-					g2.drawString("Used Memory: "+(instance.totalMemory() - instance.freeMemory()) / kb,40,240);
-					g2.drawString("Max Memory: "+instance.maxMemory()/kb,40, 260);
+					g2.drawString("Total Memory: " + instance.totalMemory() / kb, 40, 200);
+					g2.drawString("Free Memory: " + instance.freeMemory() / kb, 40, 220);
+					g2.drawString("Used Memory: " + (instance.totalMemory() - instance.freeMemory()) / kb, 40, 240);
+					g2.drawString("Max Memory: " + instance.maxMemory() / kb, 40, 260);
 				}
 
 				/*
-				 * public boolean grounded = false; public boolean airborne = true;
-				 * public boolean falling = true; public boolean jumping = false;
-				 * public boolean movingHorizontal = false; public boolean canJump =
-				 * false;
+				 * public boolean grounded = false; public boolean airborne =
+				 * true; public boolean falling = true; public boolean jumping =
+				 * false; public boolean movingHorizontal = false; public
+				 * boolean canJump = false;
 				 */
 
 			}
@@ -309,44 +304,54 @@ public class Game extends Canvas implements Runnable {
 				short b = (short) ((pixel) & 0xff);
 
 				if (r == 255 && g == 255 && b == 255) {
-					blockHandler.add(new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/dirt.png"));
+					blockHandler
+							.add(new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/dirt.png"));
 				}
 
-				//Grass 
-				if(r == 0 && g == 255 && b == 33){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/grass.png"));
+				// Grass
+				if (r == 0 && g == 255 && b == 33) {
+					blockHandler.add(
+							new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/grass.png"));
 				}
-				//Left Side Grass
-				if(r == 199 && g == 255 && b == 45){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/lsidegrass1.png"));
+				// Left Side Grass
+				if (r == 199 && g == 255 && b == 45) {
+					blockHandler.add(new Block((short) (x * 32), (short) (y * 32),
+							"resources/img/sprites/items/lsidegrass1.png"));
 				}
-				//Right Side Grass
-				if(r == 160 && g == 255 && b == 207){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/rsidegrass1.png"));
-				}
-
-				//Left Corner Grass
-				if(r == 0 && g == 127 && b == 14){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/clgrass1.png"));
-				}
-				//Right Corner Grass
-				if(r == 95 && g == 226 && b == 165){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/crgrass1.png"));
+				// Right Side Grass
+				if (r == 160 && g == 255 && b == 207) {
+					blockHandler.add(new Block((short) (x * 32), (short) (y * 32),
+							"resources/img/sprites/items/rsidegrass1.png"));
 				}
 
-				//Little bits of extra colors of course; adds stone blocks
-				if(r == 0 && g == 38 && b == 255){
-					blockHandler.add(new Block((short) (x*32), (short) (y*32), "resources/img/sprites/items/stone1.png"));
+				// Left Corner Grass
+				if (r == 0 && g == 127 && b == 14) {
+					blockHandler.add(
+							new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/clgrass1.png"));
+				}
+				// Right Corner Grass
+				if (r == 95 && g == 226 && b == 165) {
+					blockHandler.add(
+							new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/crgrass1.png"));
 				}
 
-				//Random chooser for the shrubs and flowers.
-				if(r == 255 && g == 255 && b == 0){
-					if(block == 0)
-						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "resources/img/sprites/items/shrub1.png"));
-					if(block == 1)
-						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "resources/img/sprites/items/shrub2.png"));
-					if(block == 2)
-						blockHandler.add(new NCBlock((short) (x*32), (short) (y*32), "resources/img/sprites/items/flower1.png"));
+				// Little bits of extra colors of course; adds stone blocks
+				if (r == 0 && g == 38 && b == 255) {
+					blockHandler.add(
+							new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/stone1.png"));
+				}
+
+				// Random chooser for the shrubs and flowers.
+				if (r == 255 && g == 255 && b == 0) {
+					if (block == 0)
+						blockHandler.add(new NCBlock((short) (x * 32), (short) (y * 32),
+								"resources/img/sprites/items/shrub1.png"));
+					if (block == 1)
+						blockHandler.add(new NCBlock((short) (x * 32), (short) (y * 32),
+								"resources/img/sprites/items/shrub2.png"));
+					if (block == 2)
+						blockHandler.add(new NCBlock((short) (x * 32), (short) (y * 32),
+								"resources/img/sprites/items/flower1.png"));
 				}
 
 				if (r == 0 && g == 0 && b == 0) {
@@ -359,8 +364,9 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void addLevels() {
-		// new Level(File, handler, width, height)//lvl2 3360 
-		levels[0] = new Level("resources/img/backgrounds/level6.png", "resources/img/backgrounds/l1.png", (short) 6240, (short) 704);
+		// new Level(File, handler, width, height)//lvl2 3360
+		levels[0] = new Level("resources/img/backgrounds/level6.png", "resources/img/backgrounds/l1.png", (short) 6240,
+				(short) 704);
 	}
 
 	public static void main(String[] args) {

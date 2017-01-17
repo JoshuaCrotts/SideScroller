@@ -11,6 +11,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import com.sidescroller.main.Game;
+import com.sidescroller.main.GameObject;
+import com.sidescroller.main.ID;
 
 /**A Block that has NO COLLISION; purely aesthetic*/
 public class NCBlock extends Block{

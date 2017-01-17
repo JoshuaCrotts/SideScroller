@@ -3,7 +3,6 @@ package com.sidescroller.enemies;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 
 import com.sidescroller.main.GameObject;
