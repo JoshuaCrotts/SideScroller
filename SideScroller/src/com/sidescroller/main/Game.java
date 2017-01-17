@@ -60,8 +60,8 @@ public class Game extends Canvas implements Runnable {
 	public static boolean paused = false;
 	public static boolean debug = true;
 	public static boolean borders = true;
-	public static boolean unlimitedFPS = false; // Debug Tool to allow for
-												// unlimited FPS
+	public static boolean unlimitedFPS = true; // Debug Tool to allow for
+	// unlimited FPS
 
 	public Game() {
 		titleFrame = new TitleFrame();
@@ -72,7 +72,7 @@ public class Game extends Canvas implements Runnable {
 		player = new Player((short) 90, (short) 575);
 		levels = new Level[1];
 		gui = new GUI();
-		
+
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
@@ -107,6 +107,39 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void run() {
+
+		if(unlimitedFPS){
+			requestFocus();
+			long lastTime = System.nanoTime();
+			double amountOfTicks = 60.0;
+			double ns = 1000000000 / amountOfTicks;
+			double delta = 0;
+			long timer = System.currentTimeMillis();
+			int updates = 0;
+			int frames = 0;
+			while(running){
+				long now = System.nanoTime();
+				delta += (now - lastTime) / ns;
+				lastTime = now;
+				while(delta >= 1){
+					tick();
+					updates++;
+					delta--;
+				}
+				render();
+				frames++;
+
+				if(System.currentTimeMillis() - timer > 1000){
+					timer += 1000;
+					w.setTitle(" | " + updates + " ups, " + frames + " fps");
+					currentUPS = (short)updates;
+					currentFPS = (short) frames;
+					frames = 0;
+					updates = 0;
+				}
+			}
+		}
+
 		if (!unlimitedFPS) {
 			requestFocus();
 
@@ -135,37 +168,6 @@ public class Game extends Canvas implements Runnable {
 					currentUPS = updates;
 					updates = 0;
 					frames = 0;
-				}
-			}
-			stop();
-		}
-
-		if (unlimitedFPS) {
-			requestFocus();
-			long lastTime = System.nanoTime();
-			double amountOfTicks = 60.0;
-			double ns = 1000000000 / amountOfTicks;
-			double delta = 0;
-			long timer = System.currentTimeMillis();
-			this.frames = 0;
-
-			while (running) {
-				long now = System.nanoTime();
-				delta += (now - lastTime) / ns;
-				lastTime = now;
-				while (delta >= 1) {
-					tick();
-					delta--;
-				}
-				if (running)
-					render();
-				this.frames++;
-
-				if (System.currentTimeMillis() - timer > 1000) {
-					timer += 1000;
-					// System.out.println("FPS: "+ this.frames);
-					currentFPS = this.frames;
-					this.frames = 0;
 				}
 			}
 			stop();
@@ -203,10 +205,10 @@ public class Game extends Canvas implements Runnable {
 
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, WIDTH, HEIGHT);
-		
+
 		// DRAW HERE
 
-		
+
 
 		// ****************MENU STATE**********************//
 		if (gameState == State.Menu) {
@@ -214,13 +216,13 @@ public class Game extends Canvas implements Runnable {
 			titleFrame.render(g);
 		}
 		// ****************END MENU STATE******************//
-		
-		
-		
-		
-		
+
+
+
+
+
 		//*****************PAUSED STATE********************//
-		
+
 		if(gameState == State.Paused){
 			Font f = new Font("ARIAL",Font.TRUETYPE_FONT, 32);
 			g2.setFont(f);
@@ -228,11 +230,11 @@ public class Game extends Canvas implements Runnable {
 			g2.drawString("PAUSED", 590, 350);
 		}
 		//*****************END PAUSED STATE****************//
-		
-		
-		
-		
-		
+
+
+
+
+
 
 		// ****************GAME STATE**********************//
 		if (gameState == State.Game) {
@@ -244,12 +246,12 @@ public class Game extends Canvas implements Runnable {
 			levels[currentLevelInt].render(g);
 			handler.render(g);
 			blockHandler.render(g);
-			
-			
+
+
 			// End of camera
 			g2.translate(-camera.getTranslationX(), -camera.getTranslationY());
 
-			
+
 			gui.render(g);
 
 			//DEBUG MENU DRAWER
@@ -257,7 +259,7 @@ public class Game extends Canvas implements Runnable {
 				Font f = new Font("Arial", Font.BOLD, 14);
 				g2.setFont(f);
 				g2.setColor(Color.WHITE);
-				g2.drawString("Side Scroller Alpha 1.2.0 - DEBUG MODE", 40, 50);
+				g2.drawString("Side Scroller Alpha 1.2.1 - DEBUG MODE", 40, 50);
 				g2.drawString("| FPS: " + currentFPS, 40, 70);
 				g2.drawString("| UPS: " + currentUPS, 40, 90);
 
@@ -296,14 +298,6 @@ public class Game extends Canvas implements Runnable {
 					g2.drawString("Used Memory: " + (instance.totalMemory() - instance.freeMemory()) / kb, 40, 240);
 					g2.drawString("Max Memory: " + instance.maxMemory() / kb, 40, 260);
 				}
-
-				/*
-				 * public boolean grounded = false; public boolean airborne =
-				 * true; public boolean falling = true; public boolean jumping =
-				 * false; public boolean movingHorizontal = false; public
-				 * boolean canJump = false;
-				 */
-
 			}
 		}
 		//****************END GAME STATE****************/
@@ -332,7 +326,7 @@ public class Game extends Canvas implements Runnable {
 
 				if (r == 255 && g == 255 && b == 255) {
 					blockHandler
-							.add(new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/dirt.png"));
+					.add(new Block((short) (x * 32), (short) (y * 32), "resources/img/sprites/items/dirt.png"));
 				}
 
 				// Grass
@@ -380,7 +374,7 @@ public class Game extends Canvas implements Runnable {
 						blockHandler.add(new NCBlock((short) (x * 32), (short) (y * 32),
 								"resources/img/sprites/items/flower1.png"));
 				}
-				
+
 				//Enemies
 				if(r == 255 && g == 0 && b == 0){
 					new Runner((short) (x * 32), (short) 575);
