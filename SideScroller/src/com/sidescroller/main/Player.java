@@ -14,14 +14,16 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import com.sidescroller.main.Bullet;
+import com.sidescroller.main.Game.State;
 
 public class Player extends GameObject implements KeyListener {
 
-	private Direction playerFacing;
+	
 
 	// Sprites
 	private BufferedImage stillSprite; // Standing still
 
+	private ArrayList<BufferedImage> dSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> rSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> lSprites = new ArrayList<BufferedImage>();
 	private ArrayList<BufferedImage> uRSprites = new ArrayList<BufferedImage>();
@@ -44,11 +46,13 @@ public class Player extends GameObject implements KeyListener {
 	private boolean upKeyDown = false;
 
 	// Player states
+	private Direction playerFacing;
 	public boolean airborne = true;
 	public boolean falling = true;
 	public boolean jumping = false;
 	public boolean movingHorizontal = false;
 	public boolean attacking = false;
+	public boolean down = false;
 
 	// Physics (jumping and falling)
 	private int velyInit = -10;
@@ -67,6 +71,10 @@ public class Player extends GameObject implements KeyListener {
 	public boolean belowCollision = false;
 	public boolean rightCollision = true;
 	public boolean leftCollision = true;
+	
+	//Actual game states (health, powerup, etc)
+	public static int health = 3;
+	public static int[] powerUps = {0,1,2,3,4,5};
 
 	public Player(short x, short y) {
 		super(x, y, ID.Player);
@@ -134,8 +142,8 @@ public class Player extends GameObject implements KeyListener {
 
 		if (attacking) {
 			this.currentSprite = stillSprite;
-			new Bullet((short) (this.getX() + stillSprite.getWidth()),
-					(short) (this.getY() + stillSprite.getHeight() / 2));
+			new Bullet((short) (this.getX() + stillSprite.getWidth()-35),
+					(short) ((this.getY() + stillSprite.getHeight() / 2)-15));
 			attacking = false;
 		}
 
@@ -167,6 +175,14 @@ public class Player extends GameObject implements KeyListener {
 			this.currentSprite = stillSprite;
 		}
 
+		//Crap for player lying down
+//		if(down){
+//			if(this.getDirection() == Direction.Left)
+//				this.currentSprite = dSprites.get(0);
+//			else
+//				this.currentSprite = dSprites.get(1);
+//		}
+
 		// Will loop through every block between player ticks.
 		this.belowCollision = false;
 		this.aboveCollision = false;
@@ -195,7 +211,7 @@ public class Player extends GameObject implements KeyListener {
 		} else {
 			this.x += this.velX;
 		}
-		System.out.println("player.x = " + this.x + " left Collision: " + leftCollision);
+		//System.out.println("player.x = " + this.x + " left Collision: " + leftCollision);
 	}
 
 	private void setYCoordinate() {
@@ -270,6 +286,9 @@ public class Player extends GameObject implements KeyListener {
 		case KeyEvent.VK_W:
 			upKeyDown = true;
 			break;
+		case KeyEvent.VK_S:
+			down = true;
+			break;
 		case KeyEvent.VK_A:
 			leftKeyDown = true;
 			break;
@@ -302,11 +321,16 @@ public class Player extends GameObject implements KeyListener {
 				return;
 			}
 		}
-
-		/*
-		 * Keeping out until physics is perfect if (keyCode ==
-		 * KeyEvent.VK_SPACE) { if (attacking) return; attacking = true; }
-		 */
+		// Pauses the game
+		if(keyCode == KeyEvent.VK_P){
+			if(Game.gameState != State.Paused && Game.gameState == State.Game){
+				Game.gameState = State.Paused;
+				return;
+			}else{
+				Game.gameState = State.Game;
+				return;
+			}
+		}
 
 	}
 
@@ -320,7 +344,12 @@ public class Player extends GameObject implements KeyListener {
 			upKeyDown = false;
 			break;
 
-		// Left and right are special cases
+		case KeyEvent.VK_S:
+			down = false;
+			break;
+
+
+			// Left and right are special cases
 		case KeyEvent.VK_A:
 			leftKeyDown = false;
 			velX += RUNNINGSPEED;
@@ -356,6 +385,14 @@ public class Player extends GameObject implements KeyListener {
 			} catch (IOException e) {
 				System.err.println("Error! Could not load UP images");
 			}
+		}
+
+		try{
+			dSprites.add(ImageIO.read(new File("resources/img/sprites/p/l/down0.png")));
+			dSprites.add(ImageIO.read(new File("resources/img/sprites/p/r/down0.png")));
+		}catch(IOException e){
+			System.err.println("Error! Could not load DOWN images");
+			e.printStackTrace();
 		}
 	}
 

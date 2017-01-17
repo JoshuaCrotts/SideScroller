@@ -1,6 +1,7 @@
 package com.sidescroller.main;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
@@ -104,6 +105,7 @@ public abstract class GameObject {
 		this.currentSprite = currentSprite;
 	}
 	
+	public abstract Rectangle getBounds();
 	
 	
 }

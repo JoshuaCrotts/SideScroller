@@ -11,7 +11,8 @@ public class BlockHandler {
 	private ArrayList<Block> blocks;
 
 	public static Game game;
-
+	public static Handler handler;
+	
 	public BlockHandler(Game game){
 		this.game = game;
 		this.blocks = new ArrayList<Block>();

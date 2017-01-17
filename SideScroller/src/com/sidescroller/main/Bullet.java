@@ -43,16 +43,11 @@ public class Bullet extends GameObject{
 			Game.handler.getEntities().remove(this);
 		}
 		
-		//Tests explosions
-		if(super.getX() >= 400){
-			Game.handler.add(new Explosion(super.getX(), super.getY(), ID.Explosion));
-			Game.handler.getEntities().remove(this);
-		}
-		
 		//This may need to be extended to compensate for the larger map frame.
 		if(super.getX() >= 3225){
 			Game.handler.getEntities().remove(this);
 		}
+		
 	}
 	
 	@Override

@@ -82,8 +82,8 @@ public class Block extends GameObject {
 
 	private void testRightOfBlockCollision() {
 		if (this.x == 0 && this.y == 544) {
-			System.out.println("\nSame X:" + Game.handler.sameX_Range(this, p, true));
-			System.out.println("Same Y: " + Game.handler.sameY_Range(this, p, true));
+			//System.out.println("\nSame X:" + Game.handler.sameX_Range(this, p, true));
+			//System.out.println("Same Y: " + Game.handler.sameY_Range(this, p, true));
 		}
 		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && p.getX() > this.x
 				&& Game.handler.sameX_Range(this, p, true) && Game.handler.sameY_Range(this, p, false)) {
