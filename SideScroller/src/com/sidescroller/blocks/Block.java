@@ -10,10 +10,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sidescroller.main.Game;
-import com.sidescroller.main.GameObject;
-import com.sidescroller.main.ID;
-import com.sidescroller.main.Player;
+import com.sidescroller.characters.GameObject;
+import com.sidescroller.characters.Player;
+import com.sidescroller.game.Game;
+import com.sidescroller.game.ID;
 
 public class Block extends GameObject {
 

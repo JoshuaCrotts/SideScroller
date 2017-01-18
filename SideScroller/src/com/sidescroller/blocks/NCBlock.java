@@ -10,9 +10,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sidescroller.main.Game;
-import com.sidescroller.main.GameObject;
-import com.sidescroller.main.ID;
+import com.sidescroller.game.Game;
 
 /**A Block that has NO COLLISION; purely aesthetic*/
 public class NCBlock extends Block{
@@ -20,7 +18,7 @@ public class NCBlock extends Block{
 	public NCBlock(short x, short y, String fileLocation) {
 		super(x, y, fileLocation);
 		
-		this.setID(com.sidescroller.main.ID.NCBlock);
+		this.setID(com.sidescroller.game.ID.Block);
 
 		try {
 			super.currentSprite = ImageIO.read(new File(fileLocation));
