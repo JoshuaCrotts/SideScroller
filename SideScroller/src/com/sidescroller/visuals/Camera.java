@@ -1,4 +1,7 @@
-package com.sidescroller.main;
+package com.sidescroller.visuals;
+
+import com.sidescroller.characters.Player;
+import com.sidescroller.game.Game;
 
 public class Camera {
 

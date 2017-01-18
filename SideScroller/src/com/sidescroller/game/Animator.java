@@ -1,7 +1,9 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import com.sidescroller.characters.GameObject;
 
 public class Animator{
 
@@ -73,10 +75,4 @@ public class Animator{
 	public void setAnimating(boolean animating) {
 		this.animating = animating;
 	}
-	
-	
-	
-
-
-
 }

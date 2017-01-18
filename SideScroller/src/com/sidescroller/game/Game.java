@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -7,14 +7,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 import com.sidescroller.blocks.Block;
 import com.sidescroller.blocks.NCBlock;
+import com.sidescroller.characters.Player;
+import com.sidescroller.characters.Runner;
+import com.sidescroller.visuals.Camera;
+import com.sidescroller.visuals.GUI;
+import com.sidescroller.visuals.TitleFrame;
+import com.sidescroller.visuals.Window;
 
 public class Game extends Canvas implements Runnable {
 
@@ -31,9 +33,10 @@ public class Game extends Canvas implements Runnable {
 	// Etc Objects
 	public static Player player;
 	public static Level[] levels;
-	public static Handler handler;
+	public static PrimaryHandler handler;
 	public static Camera camera;
 	public static BlockHandler blockHandler;
+	public static GUI gui;
 
 	// Memory variables
 	private Runtime instance;
@@ -54,24 +57,26 @@ public class Game extends Canvas implements Runnable {
 	public static State gameState;
 
 	public enum State {
-		Menu, Help, Select, Game, End
+		Menu, Help, Select, Game, End, Paused
 	};
 
 	// Debug tools
+	public static boolean paused = false;
 	public static boolean debug = true;
 	public static boolean borders = true;
-	public static boolean unlimitedFPS = false; // Debug Tool to allow for
+	public static boolean unlimitedFPS = true; // Debug Tool to allow for
 												// unlimited FPS
 
 	public Game() {
 		titleFrame = new TitleFrame();
-		handler = new Handler(this);
+		handler = new PrimaryHandler(this);
 		blockHandler = new BlockHandler(this);
 		camera = new Camera(0, 0);
 		this.w = new Window(WIDTH, HEIGHT, "Side Scroller V.2", this);
-		player = new Player((short) 90, (short) 500);
+		player = new Player((short) 90, (short) 575);
 		levels = new Level[1];
-
+		gui = new GUI();
+		
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
@@ -185,6 +190,7 @@ public class Game extends Canvas implements Runnable {
 			handler.tick();
 			camera.tick();
 			blockHandler.tick();
+			gui.tick();
 		}
 	}
 
@@ -199,10 +205,12 @@ public class Game extends Canvas implements Runnable {
 		Graphics g = bs.getDrawGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 
+		g2.setColor(Color.BLACK);
+		g2.fillRect(0, 0, WIDTH, HEIGHT);
+		
 		// DRAW HERE
 
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
+		
 
 		// ****************MENU STATE**********************//
 		if (gameState == State.Menu) {
@@ -210,6 +218,25 @@ public class Game extends Canvas implements Runnable {
 			titleFrame.render(g);
 		}
 		// ****************END MENU STATE******************//
+		
+		
+		
+		
+		
+		//*****************PAUSED STATE********************//
+		
+		if(gameState == State.Paused){
+			Font f = new Font("ARIAL",Font.TRUETYPE_FONT, 32);
+			g2.setFont(f);
+			g2.setColor(Color.white);
+			g2.drawString("PAUSED", 590, 350);
+		}
+		//*****************END PAUSED STATE****************//
+		
+		
+		
+		
+		
 
 		// ****************GAME STATE**********************//
 		if (gameState == State.Game) {
@@ -221,17 +248,20 @@ public class Game extends Canvas implements Runnable {
 			levels[currentLevelInt].render(g);
 			handler.render(g);
 			blockHandler.render(g);
-
+			
+			
 			// End of camera
 			g2.translate(-camera.getTranslationX(), -camera.getTranslationY());
 
-			// FPS drawer
+			
+			gui.render(g);
 
+			//DEBUG MENU DRAWER
 			if (debug) {
 				Font f = new Font("Arial", Font.BOLD, 14);
 				g2.setFont(f);
 				g2.setColor(Color.WHITE);
-				g2.drawString("Side Scroller Alpha 1.1.0 - DEBUG MODE", 40, 50);
+				g2.drawString("Side Scroller Alpha 1.2.0 - DEBUG MODE", 40, 50);
 				g2.drawString("| FPS: " + currentFPS, 40, 70);
 				g2.drawString("| UPS: " + currentUPS, 40, 90);
 
@@ -270,16 +300,9 @@ public class Game extends Canvas implements Runnable {
 					g2.drawString("Used Memory: " + (instance.totalMemory() - instance.freeMemory()) / kb, 40, 240);
 					g2.drawString("Max Memory: " + instance.maxMemory() / kb, 40, 260);
 				}
-
-				/*
-				 * public boolean grounded = false; public boolean airborne =
-				 * true; public boolean falling = true; public boolean jumping =
-				 * false; public boolean movingHorizontal = false; public
-				 * boolean canJump = false;
-				 */
-
 			}
 		}
+		//****************END GAME STATE****************/
 		// END DRAWING
 
 		g.dispose();
@@ -352,6 +375,11 @@ public class Game extends Canvas implements Runnable {
 					if (block == 2)
 						blockHandler.add(new NCBlock((short) (x * 32), (short) (y * 32),
 								"resources/img/sprites/items/flower1.png"));
+				}
+				
+				//Enemies
+				if(r == 255 && g == 0 && b == 0){
+					new Runner((short) (x * 32), (short) 575);
 				}
 
 				if (r == 0 && g == 0 && b == 0) {

@@ -1,9 +1,12 @@
-package com.sidescroller.main;
+package com.sidescroller.visuals;
+
 
 import java.awt.Canvas;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
+
+import com.sidescroller.game.Game;
 
 public class Window extends Canvas{
 

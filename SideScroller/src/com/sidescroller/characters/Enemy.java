@@ -1,12 +1,12 @@
-package com.sidescroller.enemies;
+package com.sidescroller.characters;
 
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
-import com.sidescroller.main.GameObject;
-import com.sidescroller.main.ID;
+import com.sidescroller.game.ID;
 
 public abstract class Enemy extends GameObject{
 	

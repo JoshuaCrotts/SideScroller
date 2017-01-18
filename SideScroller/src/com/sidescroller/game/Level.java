@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import com.sidescroller.enemies.Enemy;
+import com.sidescroller.characters.Enemy;
 
 public class Level {
 	

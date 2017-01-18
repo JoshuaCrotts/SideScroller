@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
 
 public enum ID {
 
@@ -7,5 +7,5 @@ public enum ID {
 	Player(),
 	Block(),
 	Enemy(),
-	Bullet(), NCBlock, Explosion;
+	Bullet(), NCBlock, Explosion, Runner;
 }

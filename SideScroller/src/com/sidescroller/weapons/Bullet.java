@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.weapons;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,6 +7,11 @@ import java.awt.Rectangle;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+
+import com.sidescroller.characters.Direction;
+import com.sidescroller.characters.GameObject;
+import com.sidescroller.game.Game;
+import com.sidescroller.game.ID;
 
 public class Bullet extends GameObject{
 	
@@ -43,16 +48,11 @@ public class Bullet extends GameObject{
 			Game.handler.getEntities().remove(this);
 		}
 		
-		//Tests explosions
-		if(super.getX() >= 400){
-			Game.handler.add(new Explosion(super.getX(), super.getY(), ID.Explosion));
-			Game.handler.getEntities().remove(this);
-		}
-		
 		//This may need to be extended to compensate for the larger map frame.
 		if(super.getX() >= 3225){
 			Game.handler.getEntities().remove(this);
 		}
+		
 	}
 	
 	@Override
@@ -61,7 +61,9 @@ public class Bullet extends GameObject{
 		
 		g2.drawImage(this.currentSprite, x, y, null);
 		g2.setColor(Color.BLUE);
-		g2.draw(getBounds());
+		
+		if(Game.borders)
+			g2.draw(getBounds());
 		
 	}
 	

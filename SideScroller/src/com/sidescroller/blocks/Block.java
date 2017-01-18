@@ -10,10 +10,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sidescroller.main.Game;
-import com.sidescroller.main.GameObject;
-import com.sidescroller.main.ID;
-import com.sidescroller.main.Player;
+import com.sidescroller.characters.GameObject;
+import com.sidescroller.characters.Player;
+import com.sidescroller.game.Game;
+import com.sidescroller.game.ID;
 
 public class Block extends GameObject {
 
@@ -82,8 +82,8 @@ public class Block extends GameObject {
 
 	private void testRightOfBlockCollision() {
 		if (this.x == 0 && this.y == 544) {
-			System.out.println("\nSame X:" + Game.handler.sameX_Range(this, p, true));
-			System.out.println("Same Y: " + Game.handler.sameY_Range(this, p, true));
+			//System.out.println("\nSame X:" + Game.handler.sameX_Range(this, p, true));
+			//System.out.println("Same Y: " + Game.handler.sameY_Range(this, p, true));
 		}
 		if (p.getX() + p.getVelX() - 1 <= this.x + this.getWidth() && p.getX() > this.x
 				&& Game.handler.sameX_Range(this, p, true) && Game.handler.sameY_Range(this, p, false)) {

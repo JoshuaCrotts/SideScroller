@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
 
 import java.io.File;
 

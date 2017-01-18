@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -11,7 +11,8 @@ public class BlockHandler {
 	private ArrayList<Block> blocks;
 
 	public static Game game;
-
+	public static PrimaryHandler handler;
+	
 	public BlockHandler(Game game){
 		this.game = game;
 		this.blocks = new ArrayList<Block>();

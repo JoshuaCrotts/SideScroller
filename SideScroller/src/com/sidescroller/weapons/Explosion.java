@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.weapons;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -7,6 +7,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+
+import com.sidescroller.characters.GameObject;
+import com.sidescroller.game.Animator;
+import com.sidescroller.game.Game;
+import com.sidescroller.game.ID;
 
 public class Explosion extends GameObject{
 

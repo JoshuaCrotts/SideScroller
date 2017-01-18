@@ -1,4 +1,4 @@
-package com.sidescroller.main;
+package com.sidescroller.characters;
 
 public enum Direction {
 	Left,

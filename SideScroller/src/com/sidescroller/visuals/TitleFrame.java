@@ -1,4 +1,5 @@
-package com.sidescroller.main;
+package com.sidescroller.visuals;
+
 
 import java.awt.Color;
 import java.awt.Font;
@@ -16,7 +17,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sidescroller.main.Game.State;
+import com.sidescroller.game.Game;
+import com.sidescroller.game.Game.State;
 
 public class TitleFrame implements KeyListener, MouseListener {
 
@@ -120,31 +122,33 @@ public class TitleFrame implements KeyListener, MouseListener {
 
 		//System.out.println(selection);
 
-		if (keyCode == KeyEvent.VK_UP) {
+		if(Game.gameState == State.Menu){
+			if (keyCode == KeyEvent.VK_UP) {
 
-			if (selection == 0) {
-				selection = 1;
-				return;
+				if (selection == 0) {
+					selection = 1;
+					return;
+				}
+				selection--;
 			}
-			selection--;
-		}
 
-		if (keyCode == KeyEvent.VK_DOWN) {
+			if (keyCode == KeyEvent.VK_DOWN) {
 
-			if (selection == 1) {
-				selection = 0;
-				return;
+				if (selection == 1) {
+					selection = 0;
+					return;
+				}
+				selection++;
+
 			}
-			selection++;
 
-		}
-
-		if (keyCode == KeyEvent.VK_ENTER) {
-			if (selection == 0) {
-				Game.gameState = State.Game;
-			}
-			if (selection == 1) {
-				System.exit(0);
+			if (keyCode == KeyEvent.VK_ENTER) {
+				if (selection == 0) {
+					Game.gameState = State.Game;
+				}
+				if (selection == 1) {
+					System.exit(0);
+				}
 			}
 		}
 

@@ -1,20 +1,41 @@
-package com.sidescroller.main;
+package com.sidescroller.game;
+
 
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class Handler {
+import com.sidescroller.characters.GameObject;
+import com.sidescroller.weapons.Explosion;
+
+public class PrimaryHandler {
 
 	private ArrayList<GameObject> entities;
 	public static Game game;
 
-	public Handler(Game game) {
+	public PrimaryHandler(Game game) {
 		this.game = game;
 		this.entities = new ArrayList<GameObject>();
 	}
 
 	public void tick() {
 		for (int i = 0; i < this.entities.size(); i++) {
+			
+			if(this.entities.get(i).getID() == ID.Bullet){
+				
+				for(int j = 0; j<this.entities.size(); j++){
+					if(this.entities.get(j).getID() == ID.Runner){
+						if(this.entities.get(i).getBounds().intersects(this.entities.get(j).getBounds())){
+							this.add(new Explosion((short) (this.entities.get(j).getX()), (short) (this.entities.get(j).getY()+20), com.sidescroller.game.ID.Explosion));
+							this.entities.remove(i);
+							this.entities.remove(j);
+							i--;
+							j--;
+							
+						}
+					}
+				}
+			}
+			
 			this.entities.get(i).tick();
 		}
 	}

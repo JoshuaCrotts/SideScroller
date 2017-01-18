@@ -1,7 +1,11 @@
-package com.sidescroller.main;
+package com.sidescroller.characters;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+
+import com.sidescroller.game.Game;
+import com.sidescroller.game.ID;
 
 public abstract class GameObject {
 
@@ -104,6 +108,7 @@ public abstract class GameObject {
 		this.currentSprite = currentSprite;
 	}
 	
+	public abstract Rectangle getBounds();
 	
 	
 }
