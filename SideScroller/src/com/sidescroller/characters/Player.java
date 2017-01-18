@@ -72,8 +72,8 @@ public class Player extends GameObject implements KeyListener {
 	// When above collision, make it appear perfect
 	public boolean aboveCollision = false;
 	public boolean belowCollision = false;
-	public boolean rightCollision = true;
-	public boolean leftCollision = true;
+	public boolean rightCollision = false;
+	public boolean leftCollision = false;
 	
 	//Actual game states (health, powerup, etc)
 	public static int health = 3;
