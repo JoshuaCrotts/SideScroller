@@ -73,10 +73,11 @@ public class Game extends Canvas implements Runnable {
 		blockHandler = new BlockHandler(this);
 		camera = new Camera(0, 0);
 		this.w = new Window(WIDTH, HEIGHT, "Side Scroller V.2", this);
-		player = new Player((short) 90, (short) 575);
+		player = new Player((short) 5000, (short) 600);
+		// player = new Player((short) 90, (short) 575);
 		levels = new Level[1];
 		gui = new GUI();
-		
+
 		this.addLevels();
 		this.loadImageLevel(levels[currentLevelInt].getImage());
 		this.addKeyListener(player);
@@ -207,10 +208,8 @@ public class Game extends Canvas implements Runnable {
 
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, WIDTH, HEIGHT);
-		
-		// DRAW HERE
 
-		
+		// DRAW HERE
 
 		// ****************MENU STATE**********************//
 		if (gameState == State.Menu) {
@@ -218,25 +217,16 @@ public class Game extends Canvas implements Runnable {
 			titleFrame.render(g);
 		}
 		// ****************END MENU STATE******************//
-		
-		
-		
-		
-		
-		//*****************PAUSED STATE********************//
-		
-		if(gameState == State.Paused){
-			Font f = new Font("ARIAL",Font.TRUETYPE_FONT, 32);
+
+		// *****************PAUSED STATE********************//
+
+		if (gameState == State.Paused) {
+			Font f = new Font("ARIAL", Font.TRUETYPE_FONT, 32);
 			g2.setFont(f);
 			g2.setColor(Color.white);
 			g2.drawString("PAUSED", 590, 350);
 		}
-		//*****************END PAUSED STATE****************//
-		
-		
-		
-		
-		
+		// *****************END PAUSED STATE****************//
 
 		// ****************GAME STATE**********************//
 		if (gameState == State.Game) {
@@ -248,15 +238,13 @@ public class Game extends Canvas implements Runnable {
 			levels[currentLevelInt].render(g);
 			handler.render(g);
 			blockHandler.render(g);
-			
-			
+
 			// End of camera
 			g2.translate(-camera.getTranslationX(), -camera.getTranslationY());
 
-			
 			gui.render(g);
 
-			//DEBUG MENU DRAWER
+			// DEBUG MENU DRAWER
 			if (debug) {
 				Font f = new Font("Arial", Font.BOLD, 14);
 				g2.setFont(f);
@@ -302,7 +290,7 @@ public class Game extends Canvas implements Runnable {
 				}
 			}
 		}
-		//****************END GAME STATE****************/
+		// ****************END GAME STATE****************/
 		// END DRAWING
 
 		g.dispose();
@@ -376,9 +364,9 @@ public class Game extends Canvas implements Runnable {
 						blockHandler.add(new NCBlock((short) (x * 32), (short) (y * 32),
 								"resources/img/sprites/items/flower1.png"));
 				}
-				
-				//Enemies
-				if(r == 255 && g == 0 && b == 0){
+
+				// Enemies
+				if (r == 255 && g == 0 && b == 0) {
 					new Runner((short) (x * 32), (short) 575);
 				}
 

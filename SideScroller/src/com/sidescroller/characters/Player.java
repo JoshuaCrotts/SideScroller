@@ -21,8 +21,6 @@ import com.sidescroller.weapons.Bullet;
 
 public class Player extends GameObject implements KeyListener {
 
-	
-
 	// Sprites
 	private BufferedImage stillSprite; // Standing still
 
@@ -74,10 +72,10 @@ public class Player extends GameObject implements KeyListener {
 	public boolean belowCollision = false;
 	public boolean rightCollision = false;
 	public boolean leftCollision = false;
-	
-	//Actual game states (health, powerup, etc)
+
+	// Actual game states (health, powerup, etc)
 	public static int health = 3;
-	public static int[] powerUps = {0,1,2,3,4,5};
+	public static int[] powerUps = { 0, 1, 2, 3, 4, 5 };
 
 	public Player(short x, short y) {
 		super(x, y, ID.Player);
@@ -145,8 +143,8 @@ public class Player extends GameObject implements KeyListener {
 
 		if (attacking) {
 			this.currentSprite = stillSprite;
-			new Bullet((short) (this.getX() + stillSprite.getWidth()-35),
-					(short) ((this.getY() + stillSprite.getHeight() / 2)-15));
+			new Bullet((short) (this.getX() + stillSprite.getWidth() - 35),
+					(short) ((this.getY() + stillSprite.getHeight() / 2) - 15));
 			attacking = false;
 		}
 
@@ -178,13 +176,13 @@ public class Player extends GameObject implements KeyListener {
 			this.currentSprite = stillSprite;
 		}
 
-		//Crap for player lying down
-//		if(down){
-//			if(this.getDirection() == Direction.Left)
-//				this.currentSprite = dSprites.get(0);
-//			else
-//				this.currentSprite = dSprites.get(1);
-//		}
+		// Crap for player lying down
+		// if(down){
+		// if(this.getDirection() == Direction.Left)
+		// this.currentSprite = dSprites.get(0);
+		// else
+		// this.currentSprite = dSprites.get(1);
+		// }
 
 		// Will loop through every block between player ticks.
 		this.belowCollision = false;
@@ -214,7 +212,6 @@ public class Player extends GameObject implements KeyListener {
 		} else {
 			this.x += this.velX;
 		}
-		//System.out.println("player.x = " + this.x + " left Collision: " + leftCollision);
 	}
 
 	private void setYCoordinate() {
@@ -237,6 +234,10 @@ public class Player extends GameObject implements KeyListener {
 	}
 
 	private void configureStates() {
+		if (aboveCollision && !belowCollision) {
+			this.falling = true;
+			this.jumping = false;
+		}
 
 		if (belowCollision && upKeyDown) {
 			jumping = true;
@@ -248,7 +249,6 @@ public class Player extends GameObject implements KeyListener {
 
 		if (jumping || falling) {
 			airborne = true;
-			belowCollision = false;
 		}
 
 		if (this.leftKeyDown || this.rightKeyDown) {
@@ -325,11 +325,11 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 		// Pauses the game
-		if(keyCode == KeyEvent.VK_P){
-			if(Game.gameState != State.Paused && Game.gameState == State.Game){
+		if (keyCode == KeyEvent.VK_P) {
+			if (Game.gameState != State.Paused && Game.gameState == State.Game) {
 				Game.gameState = State.Paused;
 				return;
-			}else{
+			} else {
 				Game.gameState = State.Game;
 				return;
 			}
@@ -351,8 +351,7 @@ public class Player extends GameObject implements KeyListener {
 			down = false;
 			break;
 
-
-			// Left and right are special cases
+		// Left and right are special cases
 		case KeyEvent.VK_A:
 			leftKeyDown = false;
 			velX += RUNNINGSPEED;
@@ -390,10 +389,10 @@ public class Player extends GameObject implements KeyListener {
 			}
 		}
 
-		try{
+		try {
 			dSprites.add(ImageIO.read(new File("resources/img/sprites/p/l/down0.png")));
 			dSprites.add(ImageIO.read(new File("resources/img/sprites/p/r/down0.png")));
-		}catch(IOException e){
+		} catch (IOException e) {
 			System.err.println("Error! Could not load DOWN images");
 			e.printStackTrace();
 		}
